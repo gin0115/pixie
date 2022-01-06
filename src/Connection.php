@@ -1,7 +1,9 @@
-<?php namespace Pixie;
+<?php
 
-use Pixie\QueryBuilder\Raw;
+namespace Pixie;
+
 use Viocon\Container;
+use Pixie\QueryBuilder\Raw;
 
 class Connection
 {
@@ -22,9 +24,9 @@ class Connection
     protected $adapterConfig;
 
     /**
-     * @var \PDO
+     * @var \wpdb
      */
-    protected $pdoInstance;
+    protected $wpdbInstance;
 
     /**
      * @var Connection
@@ -42,13 +44,13 @@ class Connection
      * @param null|string   $alias
      * @param Container     $container
      */
-    public function __construct($adapter, array $adapterConfig, $alias = null, Container $container = null)
+    public function __construct(\wpdb $wpdb, array $adapterConfig = [], $alias = null, Container $container = null)
     {
-        $container = $container ? : new Container();
+        $this->wpdbInstance = $wpdb;
 
-        $this->container = $container;
+        $this->setAdapterConfig($adapterConfig);
 
-        $this->setAdapter($adapter)->setAdapterConfig($adapterConfig)->connect();
+        $this->container = $container ?? new Container();
 
         // Create event dependency
         $this->eventHandler = $this->container->build('\\Pixie\\EventHandler');
@@ -66,7 +68,7 @@ class Connection
     public function createAlias($alias)
     {
         class_alias('Pixie\\AliasFacade', $alias);
-        $builder = $this->container->build('\\Pixie\\QueryBuilder\\QueryBuilderHandler', array($this));
+        $builder = $this->container->build('\\Pixie\\QueryBuilder\\QueryBuilderHandler', array( $this ));
         AliasFacade::setQueryBuilderInstance($builder);
     }
 
@@ -75,7 +77,7 @@ class Connection
      */
     public function getQueryBuilder()
     {
-        return $this->container->build('\\Pixie\\QueryBuilder\\QueryBuilderHandler', array($this));
+        return $this->container->build('\\Pixie\\QueryBuilder\\QueryBuilderHandler', array( $this ));
     }
 
 
@@ -84,38 +86,38 @@ class Connection
      */
     protected function connect()
     {
-        // Build a database connection if we don't have one connected
+    //     // Build a database connection if we don't have one connected
 
-        $adapter = '\\Pixie\\ConnectionAdapters\\' . ucfirst(strtolower($this->adapter));
+    //     $adapter = '\\Pixie\\ConnectionAdapters\\' . ucfirst(strtolower($this->adapter));
 
-        $adapterInstance = $this->container->build($adapter, array($this->container));
+    //     $adapterInstance = $this->container->build($adapter, array( $this->container ));
 
-        $pdo = $adapterInstance->connect($this->adapterConfig);
-        $this->setPdoInstance($pdo);
+    //     $wpdb = $this->wpdbInstance;
+    //     $this->setDbInstance($wpdb);
 
         // Preserve the first database connection with a static property
-        if (!static::$storedConnection) {
+        if (! static::$storedConnection) {
             static::$storedConnection = $this;
         }
     }
 
     /**
-     * @param \PDO $pdo
+     * @param \wpdb $wpdb
      *
      * @return $this
      */
-    public function setPdoInstance(\PDO $pdo)
+    public function setDbInstance(\wpdb $wpdb)
     {
-        $this->pdoInstance = $pdo;
+        $this->wpdbInstance = $wpdb;
         return $this;
     }
 
     /**
-     * @return \PDO
+     * @return \wpdb
      */
-    public function getPdoInstance()
+    public function getDbInstance()
     {
-        return $this->pdoInstance;
+        return $this->wpdbInstance;
     }
 
     /**

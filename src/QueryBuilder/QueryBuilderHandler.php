@@ -1,8 +1,10 @@
-<?php namespace Pixie\QueryBuilder;
+<?php
+
+namespace Pixie\QueryBuilder;
 
 use PDO;
-use Pixie\Connection;
 use Pixie\Exception;
+use Pixie\Connection;
 
 class QueryBuilderHandler
 {
@@ -23,14 +25,14 @@ class QueryBuilderHandler
     protected $statements = array();
 
     /**
-     * @var PDO
+     * @var \wpdb
      */
-    protected $pdo;
+    protected $wpdb;
 
     /**
-     * @var null|PDOStatement
+     * @var null|sqlStatement
      */
-    protected $pdoStatement = null;
+    protected $sqlStatement = null;
 
     /**
      * @var null|string
@@ -52,10 +54,10 @@ class QueryBuilderHandler
     /**
      * @param null|\Pixie\Connection $connection
      *
-     * @param int $fetchMode
+     * @param string $fetchMode
      * @throws Exception
      */
-    public function __construct(Connection $connection = null, $fetchMode = PDO::FETCH_OBJ)
+    public function __construct(Connection $connection = null, string $fetchMode = \OBJECT)
     {
         if (is_null($connection)) {
             if (!$connection = Connection::getStoredConnection()) {
@@ -65,8 +67,8 @@ class QueryBuilderHandler
 
         $this->connection = $connection;
         $this->container = $this->connection->getContainer();
-        $this->pdo = $this->connection->getPdoInstance();
-        $this->adapter = $this->connection->getAdapter();
+        $this->wpdb = $this->connection->getDbInstance();
+        $this->adapter = 'wpdb';
         $this->adapterConfig = $this->connection->getAdapterConfig();
 
         $this->setFetchMode($fetchMode);
@@ -81,7 +83,7 @@ class QueryBuilderHandler
             array($this->connection)
         );
 
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // $this->wpdb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     /**
@@ -130,7 +132,7 @@ class QueryBuilderHandler
      */
     public function query($sql, $bindings = array())
     {
-        list($this->pdoStatement) = $this->statement($sql, $bindings);
+        list($this->sqlStatement) = $this->statement($sql, $bindings);
 
         return $this;
     }
@@ -139,21 +141,15 @@ class QueryBuilderHandler
      * @param       $sql
      * @param array $bindings
      *
-     * @return array PDOStatement and execution time as float
+     * @return array sqlStatement and execution time as float
      */
     public function statement($sql, $bindings = array())
     {
+        // dd($sql);
         $start = microtime(true);
-        $pdoStatement = $this->pdo->prepare($sql);
-        foreach ($bindings as $key => $value) {
-            $pdoStatement->bindValue(
-                is_int($key) ? $key + 1 : $key,
-                $value,
-                is_int($value) || is_bool($value) ? PDO::PARAM_INT : PDO::PARAM_STR
-            );
-        }
-        $pdoStatement->execute();
-        return array($pdoStatement, microtime(true) - $start);
+        $sqlStatement = empty($bindings) ? $sql : $this->wpdb->prepare($sql, $bindings);
+        // dump($sqlStatement);
+        return array($sqlStatement, microtime(true) - $start);
     }
 
     /**
@@ -164,24 +160,25 @@ class QueryBuilderHandler
      */
     public function get()
     {
+        // dump($this,$this->sqlStatement);
         $eventResult = $this->fireEvents('before-select');
         if (!is_null($eventResult)) {
             return $eventResult;
         };
-
         $executionTime = 0;
-        if (is_null($this->pdoStatement)) {
+        if (is_null($this->sqlStatement)) {
             $queryObject = $this->getQuery('select');
-            list($this->pdoStatement, $executionTime) = $this->statement(
+
+            list($this->sqlStatement, $executionTime) = $this->statement(
                 $queryObject->getSql(),
                 $queryObject->getBindings()
             );
         }
 
         $start = microtime(true);
-        $result = call_user_func_array(array($this->pdoStatement, 'fetchAll'), $this->fetchParameters);
+        $result = call_user_func_array(array($this->wpdb, 'get_results'), [$this->sqlStatement, $this->getFetchMode()]);
         $executionTime += microtime(true) - $start;
-        $this->pdoStatement = null;
+        $this->sqlStatement = null;
         $this->fireEvents('after-select', $result, $executionTime);
         return $result;
     }
@@ -289,7 +286,7 @@ class QueryBuilderHandler
 
         return $this->container->build(
             '\\Pixie\\QueryBuilder\\QueryObject',
-            array($queryArr['sql'], $queryArr['bindings'], $this->pdo)
+            array($queryArr['sql'], $queryArr['bindings'], $this->wpdb)
         );
     }
 
@@ -328,7 +325,7 @@ class QueryBuilderHandler
 
             list($result, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
 
-            $return = $result->rowCount() === 1 ? $this->pdo->lastInsertId() : null;
+            $return = $result->rowCount() === 1 ? $this->wpdb->lastInsertId() : null;
         } else {
             // Its a batch insert
             $return = array();
@@ -340,7 +337,7 @@ class QueryBuilderHandler
                 $executionTime += $time;
 
                 if ($result->rowCount() === 1) {
-                    $return[] = $this->pdo->lastInsertId();
+                    $return[] = $this->wpdb->lastInsertId();
                 }
             }
         }
@@ -816,7 +813,7 @@ class QueryBuilderHandler
     {
         try {
             // Begin the PDO transaction
-            $this->pdo->beginTransaction();
+            $this->wpdb->beginTransaction();
 
             // Get the Transaction class
             $transaction = $this->container->build('\\Pixie\\QueryBuilder\\Transaction', array($this->connection));
@@ -826,7 +823,7 @@ class QueryBuilderHandler
 
             // If no errors have been thrown or the transaction wasn't completed within
             // the closure, commit the changes
-            $this->pdo->commit();
+            $this->wpdb->commit();
 
             return $this;
         } catch (TransactionHaltException $e) {
@@ -834,7 +831,7 @@ class QueryBuilderHandler
             return $this;
         } catch (\Exception $e) {
             // something happened, rollback changes
-            $this->pdo->rollBack();
+            $this->wpdb->rollBack();
             return $this;
         }
     }
@@ -898,7 +895,7 @@ class QueryBuilderHandler
      */
     public function pdo()
     {
-        return $this->pdo;
+        return $this->wpdb;
     }
 
     /**
@@ -1067,11 +1064,11 @@ class QueryBuilderHandler
     }
 
     /**
-     * @return int will return PDO Fetch mode
+     * @return string will return WPDB Fetch mode
      */
     public function getFetchMode()
     {
         return !empty($this->fetchParameters) ?
-            current($this->fetchParameters) : PDO::FETCH_OBJ;
+            current($this->fetchParameters) : \OBJECT;
     }
 }

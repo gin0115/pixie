@@ -1,7 +1,9 @@
-<?php namespace Pixie\QueryBuilder\Adapters;
+<?php
 
-use Pixie\Connection;
+namespace Pixie\QueryBuilder\Adapters;
+
 use Pixie\Exception;
+use Pixie\Connection;
 use Pixie\QueryBuilder\Raw;
 
 abstract class BaseAdapter
@@ -398,7 +400,8 @@ abstract class BaseAdapter
                     default:
                         $valuePlaceholder = '';
                         foreach ($statement['value'] as $subValue) {
-                            $valuePlaceholder .= '?, ';
+                            // Add in format placeholders.
+                            $valuePlaceholder .= sprintf('%s, ', $this->assertType($subValue)); // glynn
                             $bindings[] = $subValue;
                         }
 
@@ -422,8 +425,9 @@ abstract class BaseAdapter
                     $bindings = array_merge($bindings, $statement['key']->getBindings());
                 } else {
                     // For wheres
-
-                    $valuePlaceholder = '?';
+//glynn
+                    // dump($value);
+                    $valuePlaceholder = $this->assertType($value);
                     $bindings[] = $value;
                     $criteria .= $statement['joiner'] . ' ' . $key . ' ' . $statement['operator'] . ' '
                         . $valuePlaceholder . ' ';
@@ -435,6 +439,27 @@ abstract class BaseAdapter
         $criteria = preg_replace('/^(\s?AND ?|\s?OR ?)|\s$/i', '', $criteria);
 
         return array($criteria, $bindings);
+    }
+
+    /**
+     * Asserts the types place holder based on its value
+     *
+     * @param mixed $value
+     * @return string
+     */
+    public function assertType($value): string
+    {
+        switch (true) {
+            case is_string($value):
+                return '%s';
+            case \is_int($value):
+            case \is_bool($value):
+                return '%d';
+            case \is_float($value):
+                return '%f';
+            default:
+                return '';
+        }
     }
 
     /**

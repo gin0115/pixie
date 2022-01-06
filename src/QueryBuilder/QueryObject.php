@@ -18,7 +18,7 @@ class QueryObject
      */
     protected $pdo;
 
-    public function __construct($sql, array $bindings, \PDO $pdo)
+    public function __construct($sql, array $bindings,  $pdo)
     {
         $this->sql = (string)$sql;
         $this->bindings = $bindings;
