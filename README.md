@@ -1,3 +1,8 @@
+# Modified version of Pixie for use with WordPress and WPDB over PDO.
+
+## WIP!
+
+
 **This project is Not Actively Maintained but most of the features are fully working and there are no major security issues, I'm just not giving it much time.**
 
 
