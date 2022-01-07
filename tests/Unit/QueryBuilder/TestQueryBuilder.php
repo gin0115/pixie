@@ -136,9 +136,9 @@ class TestQueryBuilder extends WP_UnitTestCase
         $this->assertEquals("SELECT count(*) as field FROM foo WHERE key = 'value'", $log['query']);
     }
 
-                                        ##################################
-                                        ##       WHERE CONDITIONS       ##
-                                        ##################################
+                                        ################################################
+                                        ##              WHERE CONDITIONS              ##
+                                        ################################################
 
     /** @testdox It should be possible to create a query which uses Where and Where not (using AND condition) */
     public function testWhereAndWhereNot(): void
