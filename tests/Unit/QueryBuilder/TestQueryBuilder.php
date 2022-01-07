@@ -206,4 +206,77 @@ class TestQueryBuilder extends WP_UnitTestCase
             ->whereIn('key2', [2, 12]);
         $this->assertEquals("SELECT * FROM foo WHERE key NOT IN ('v1', 'v2') AND key2 IN (2, 12)", $builderMixed->getQuery()->getRawSql());
     }
+
+    /** @testdox It should be possible to create a query which uses Where In and Where not In (using OR condition) */
+    public function testWhereInOrWhereNotIn(): void
+    {
+        $builderWhere = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhereIn('key', ['v1', 'v2'])
+            ->orWhereIn('key2', [2, 12]);
+        $this->assertEquals("SELECT * FROM foo WHERE key IN ('v1', 'v2') OR key2 IN (2, 12)", $builderWhere->getQuery()->getRawSql());
+
+        $builderNot = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhereNotIn('key', ['v1', 'v2'])
+            ->orWhereNotIn('key2', [2, 12]);
+        $this->assertEquals("SELECT * FROM foo WHERE key NOT IN ('v1', 'v2') OR key2 NOT IN (2, 12)", $builderNot->getQuery()->getRawSql());
+
+        $builderMixed = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhereNotIn('key', ['v1', 'v2'])
+            ->orWhereIn('key2', [2, 12]);
+        $this->assertEquals("SELECT * FROM foo WHERE key NOT IN ('v1', 'v2') OR key2 IN (2, 12)", $builderMixed->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a query which uses Where Null and Where not Null (using AND condition) */
+    public function testWhereNullAndWhereNotNull(): void
+    {
+        $builderWhere = $this->queryBuilderProvider()
+            ->table('foo')
+            ->whereNull('key')
+            ->whereNull('key2');
+        $this->assertEquals("SELECT * FROM foo WHERE key IS NULL AND key2 IS NULL", $builderWhere->getQuery()->getRawSql());
+
+        $builderNot = $this->queryBuilderProvider()
+            ->table('foo')
+            ->whereNotNull('key')
+            ->whereNotNull('key2');
+        $this->assertEquals("SELECT * FROM foo WHERE key IS NOT NULL AND key2 IS NOT NULL", $builderNot->getQuery()->getRawSql());
+
+        $builderMixed = $this->queryBuilderProvider()
+            ->table('foo')
+            ->whereNotNull('key')
+            ->whereNull('key2');
+        $this->assertEquals("SELECT * FROM foo WHERE key IS NOT NULL AND key2 IS NULL", $builderMixed->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a query which uses Where Null and Where not Null (using OR condition) */
+    public function testWhereNullOrWhereNotNull(): void
+    {
+        $builderWhere = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhereNull('key')
+            ->orWhereNull('key2');
+        $this->assertEquals("SELECT * FROM foo WHERE key IS NULL OR key2 IS NULL", $builderWhere->getQuery()->getRawSql());
+
+        $builderNot = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhereNotNull('key')
+            ->orWhereNotNull('key2');
+        $this->assertEquals("SELECT * FROM foo WHERE key IS NOT NULL OR key2 IS NOT NULL", $builderNot->getQuery()->getRawSql());
+
+        $builderMixed = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhereNotNull('key')
+            ->orWhereNull('key2');
+        $this->assertEquals("SELECT * FROM foo WHERE key IS NOT NULL OR key2 IS NULL", $builderMixed->getQuery()->getRawSql());
+    }
+
+
+                                        ################################################
+                                        ##              GROUP CONDITIONS              ##
+                                        ################################################
+
+
 }

@@ -172,7 +172,7 @@ class QueryBuilderHandler
     /**
      * Get first row
      *
-     * @return \stdClass|null
+     * @return \stdClass|array|null
      */
     public function first()
     {
@@ -758,10 +758,12 @@ class QueryBuilderHandler
         return $this->whereNullHandler($key, 'NOT', 'or');
     }
 
-    protected function whereNullHandler($key, $prefix = '', $operator = '')
+    protected function whereNullHandler($key, string $prefix = '', $operator = '')
     {
+        $prefix = \strlen($prefix) === 0 ? '' : " {$prefix}";
+
         $key = $this->adapterInstance->wrapSanitizer($this->addTablePrefix($key));
-        return $this->{$operator . 'Where'}($this->raw("{$key} IS {$prefix} NULL"));
+        return $this->{$operator . 'Where'}($this->raw("{$key} IS{$prefix} NULL"));
     }
 
     /**
