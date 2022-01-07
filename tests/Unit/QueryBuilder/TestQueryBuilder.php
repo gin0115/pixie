@@ -140,6 +140,7 @@ class TestQueryBuilder extends WP_UnitTestCase
                                         ##              WHERE CONDITIONS              ##
                                         ################################################
 
+
     /** @testdox It should be possible to create a query which uses Where and Where not (using AND condition) */
     public function testWhereAndWhereNot(): void
     {
