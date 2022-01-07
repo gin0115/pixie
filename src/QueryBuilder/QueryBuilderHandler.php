@@ -883,11 +883,11 @@ class QueryBuilderHandler
     }
 
     /**
-     * Return PDO instance
+     * Return wpdb instance
      *
-     * @return PDO
+     * @return wpdb
      */
-    public function pdo()
+    public function dbInstance(): \wpdb
     {
         return $this->wpdb;
     }
