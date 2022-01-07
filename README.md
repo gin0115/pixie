@@ -141,18 +141,9 @@ Pixie supports three database drivers, MySQL, SQLite and PostgreSQL. You can spe
 // Make sure you have Composer's autoload file included
 require 'vendor/autoload.php';
 
-$config = array(
-            'driver'    => 'mysql', // Db driver
-            'host'      => 'localhost',
-            'database'  => 'your-database',
-            'username'  => 'root',
-            'password'  => 'your-password',
-            'charset'   => 'utf8', // Optional
-            'collation' => 'utf8_unicode_ci', // Optional
-            'prefix'    => 'cb_', // Table prefix, optional
-        );
+$config = array( 'prefix'    => 'cb_'); // Table prefix, optional
 
-new \Pixie\Connection('mysql', $config, 'QB');
+new \Pixie\Connection($wpdb, $config, 'QB');
 
 // Run query
 $query = QB::table('my_table')->where('name', '=', 'Sana');
@@ -161,7 +152,7 @@ $query = QB::table('my_table')->where('name', '=', 'Sana');
 ### Alias
 When you create a connection:
 ```PHP
-new \Pixie\Connection('mysql', $config, 'MyAlias');
+new \Pixie\Connection($wpdb, $config, 'MyAlias');
 ```
 `MyAlias` is the name for the class alias you want to use (like `MyAlias::table(...)`), you can use whatever name (with Namespace also, `MyNamespace\\MyClass`) you like or you may skip it if you don't need an alias. Alias gives you the ability to easily access the QueryBuilder class across your application.
 
@@ -177,28 +168,6 @@ var_dump($query->get());
 ```
 
 `$connection` here is optional, if not given it will always associate itself to the first connection, but it can be useful when you have multiple database connections.
-
-### SQLite and PostgreSQL Config Sample
-```PHP
-new \Pixie\Connection('sqlite', array(
-                'driver'   => 'sqlite',
-			    'database' => 'your-file.sqlite',
-			    'prefix'   => 'cb_',
-		    ), 'QB');
-```
-
-```PHP
-new \Pixie\Connection('pgsql', array(
-                    'driver'   => 'pgsql',
-                    'host'     => 'localhost',
-                    'database' => 'your-database',
-                    'username' => 'postgres',
-                    'password' => 'your-password',
-                    'charset'  => 'utf8',
-                    'prefix'   => 'cb_',
-                    'schema'   => 'public',
-                ), 'QB');
-```
 
 ## Query
 You **must** use `table()` method before every query, except raw `query()`.
