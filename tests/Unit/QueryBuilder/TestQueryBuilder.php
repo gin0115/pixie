@@ -135,4 +135,74 @@ class TestQueryBuilder extends WP_UnitTestCase
         $log = $this->wpdb->usage_log['get_results'][0];
         $this->assertEquals("SELECT count(*) as field FROM foo WHERE key = 'value'", $log['query']);
     }
+
+            ##################################
+            ##       WHERE CONDITIONS       ##
+            ##################################
+
+    /** @testdox It should be possible to create a query which uses Where and Where not (using AND condition) */
+    public function testWhereAndWhereNot(): void
+    {
+        $builderWhere = $this->queryBuilderProvider()
+            ->table('foo')
+            ->where('key', '=', 'value')
+            ->where('key2', '=', 'value2');
+        $this->assertEquals("SELECT * FROM foo WHERE key = 'value' AND key2 = 'value2'", $builderWhere->getQuery()->getRawSql());
+
+        $builderNot = $this->queryBuilderProvider()
+            ->table('foo')
+            ->whereNot('key', '<', 'value')
+            ->whereNot('key2', '>', 'value2');
+        $this->assertEquals("SELECT * FROM foo WHERE NOT key < 'value' AND NOT key2 > 'value2'", $builderNot->getQuery()->getRawSql());
+
+        $builderMixed = $this->queryBuilderProvider()
+            ->table('foo')
+            ->where('key', '=', 'value')
+            ->whereNot('key2', '>', 'value2');
+        $this->assertEquals("SELECT * FROM foo WHERE key = 'value' AND NOT key2 > 'value2'", $builderMixed->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a query which uses Where and Where not (using OR condition) */
+    public function testWhereOrWhereNot(): void
+    {
+        $builderWhere = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhere('key', '=', 'value')
+            ->orWhere('key2', '=', 'value2');
+        $this->assertEquals("SELECT * FROM foo WHERE key = 'value' OR key2 = 'value2'", $builderWhere->getQuery()->getRawSql());
+
+        $builderNot = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhereNot('key', '<', 'value')
+            ->orWhereNot('key2', '>', 'value2');
+        $this->assertEquals("SELECT * FROM foo WHERE NOT key < 'value' OR NOT key2 > 'value2'", $builderNot->getQuery()->getRawSql());
+
+        $builderMixed = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhere('key', '=', 'value')
+            ->orWhereNot('key2', '>', 'value2');
+        $this->assertEquals("SELECT * FROM foo WHERE key = 'value' OR NOT key2 > 'value2'", $builderMixed->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a query which uses Where In and Where not In (using AND condition) */
+    public function testWhereInAndWhereNotIn(): void
+    {
+        $builderWhere = $this->queryBuilderProvider()
+            ->table('foo')
+            ->whereIn('key', ['v1', 'v2'])
+            ->whereIn('key2', [2, 12]);
+        $this->assertEquals("SELECT * FROM foo WHERE key IN ('v1', 'v2') AND key2 IN (2, 12)", $builderWhere->getQuery()->getRawSql());
+
+        $builderNot = $this->queryBuilderProvider()
+            ->table('foo')
+            ->whereNotIn('key', ['v1', 'v2'])
+            ->whereNotIn('key2', [2, 12]);
+        $this->assertEquals("SELECT * FROM foo WHERE key NOT IN ('v1', 'v2') AND key2 NOT IN (2, 12)", $builderNot->getQuery()->getRawSql());
+
+        $builderMixed = $this->queryBuilderProvider()
+            ->table('foo')
+            ->whereNotIn('key', ['v1', 'v2'])
+            ->whereIn('key2', [2, 12]);
+        $this->assertEquals("SELECT * FROM foo WHERE key NOT IN ('v1', 'v2') AND key2 IN (2, 12)", $builderMixed->getQuery()->getRawSql());
+    }
 }

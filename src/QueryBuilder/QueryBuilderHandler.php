@@ -49,7 +49,7 @@ class QueryBuilderHandler
      *
      * @var array
      */
-    protected $fetchParameters = array(PDO::FETCH_OBJ);
+    protected $fetchParameters;
 
     /**
      * @param null|\Pixie\Connection $connection
@@ -79,35 +79,21 @@ class QueryBuilderHandler
 
         // Query builder adapter instance
         $this->adapterInstance = $this->container->build(
-            '\\Pixie\\QueryBuilder\\Adapters\\' . ucfirst($this->adapter),
+            '\\Pixie\\QueryBuilder\\Adapters\\wpdb',
             array($this->connection)
         );
-
-        // $this->wpdb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     /**
      * Set the fetch mode
      *
-     * @param $mode
+     * @param string $mode
      * @return $this
      */
-    public function setFetchMode($mode)
+    public function setFetchMode(string $mode): self
     {
-        $this->fetchParameters = func_get_args();
+        $this->fetchParameters = $mode;
         return $this;
-    }
-
-    /**
-     * Fetch query results as object of specified type
-     *
-     * @param $className
-     * @param array $constructorArgs
-     * @return QueryBuilderHandler
-     */
-    public function asObject($className, $constructorArgs = array())
-    {
-        return $this->setFetchMode(PDO::FETCH_CLASS, $className, $constructorArgs);
     }
 
     /**
@@ -1074,8 +1060,9 @@ class QueryBuilderHandler
      */
     public function getFetchMode()
     {
-        return !empty($this->fetchParameters) ?
-            current($this->fetchParameters) : \OBJECT;
+        return null !== $this->fetchParameters
+            ? $this->fetchParameters
+            : \OBJECT;
     }
 
     /**
