@@ -124,7 +124,7 @@ Library on [Packagist](https://packagist.org/packages/gin0115/pixie).
  - [Transactions](#transactions)
  - [Get Built Query](#get-built-query)
  - [Sub Queries and Nested Queries](#sub-queries-and-nested-queries)
- - [Get PDO Instance](#get-pdo-instance)
+ - [Get WPDB Instance](#get-wpdb-instance)
  - [Fetch results as objects of specified class](#fetch-results-as-objects-of-specified-class)
  - [Query Events](#query-events)
     - [Available Events](#available-events)
