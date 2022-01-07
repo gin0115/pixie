@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Unit tests for QueryBuilderHandler
+ * Unit tests for QueryBuilderHandler to ensure all queries used WPDB::prepare()
  *
  * @since 0.1.0
  * @author GLynn Quelch <glynn.quelch@gmail.com>
@@ -16,7 +16,7 @@ use Pixie\Tests\Logable_WPDB;
 use PHPUnit\Framework\TestCase;
 use Pixie\QueryBuilder\QueryBuilderHandler;
 
-class TestQueryBuilderHandler extends TestCase
+class TestQueryBuilderUsesWPDBPrepare extends TestCase
 {
     /** Mocked WPDB instance. */
     private $wpdb;
@@ -33,10 +33,10 @@ class TestQueryBuilderHandler extends TestCase
      * @param string|null $prefix
      * @return \Pixie\QueryBuilder\QueryBuilderHandler
      */
-    public function queryBuilderProvider(?string $prefix = null): QueryBuilderHandler
+    public function queryBuilderProvider(?string $prefix = null, ?string $alias = null): QueryBuilderHandler
     {
         $config = $prefix ? ['prefix' => $prefix] : [];
-        $connection = new Connection($this->wpdb, $config);
+        $connection = new Connection($this->wpdb, $config, $alias);
         return new QueryBuilderHandler($connection);
     }
 
@@ -96,6 +96,22 @@ class TestQueryBuilderHandler extends TestCase
         $this->assertEquals(2, $prepared['args'][0]);
     }
 
+    /** @testdox It should be possible to create a get call with value (bool) condition and have this generated and run through WPDB::prepare() */
+    public function testGetWithSingleConditionBoolValue(): void
+    {
+        $builder = $this->queryBuilderProvider();
+        $builder->table('foo')->where('key', '=', true)->get();
+
+        // Query and values passed to prepare();
+        $prepared = $this->wpdb->usage_log['prepare'][0];
+
+        // Check that the query is passed to prepare.
+        $this->assertEquals('SELECT * FROM foo WHERE key = %d', $prepared['query']);
+
+        // Check values are used in order passed
+        $this->assertEquals(1, $prepared['args'][0]);
+    }
+
     /** @testdox It should be possible to create a get call with value (in array) condition and have this generated and run through WPDB::prepare() */
     public function testGetWithSingleConditionArrayInValue(): void
     {
@@ -130,4 +146,31 @@ class TestQueryBuilderHandler extends TestCase
         $this->assertEquals(2, $prepared['args'][0]);
         $this->assertEquals(2.5, $prepared['args'][1]);
     }
+
+    /** @testdox It should be possible to create events that are prepared using WPDB::prepare() */
+    public function testPreparesEvents(): void
+    {
+        $builder = $this->queryBuilderProvider(null, 'AA');
+
+        \AA::registerEvent('before-select', 'foo', function ($qb) {
+            $qb->where('status', '!=', 'banned');
+        });
+
+        $builder->table('foo')->where('key', 'between', [2, 2.5])->get();
+
+        // Query and values passed to prepare();
+        $prepared = $this->wpdb->usage_log['prepare'][0];
+
+        // Check that the query is passed to prepare.
+        $this->assertEquals('SELECT * FROM foo WHERE key between (%d, %f) AND status != %s', $prepared['query']);
+
+        // Check values are used in order passed
+        $this->assertEquals(2, $prepared['args'][0]);
+        $this->assertEquals(2.5, $prepared['args'][1]);
+        $this->assertEquals('banned', $prepared['args'][2]);
+    }
+
+
+
+    
 }

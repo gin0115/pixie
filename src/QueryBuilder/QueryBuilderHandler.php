@@ -251,12 +251,17 @@ class QueryBuilderHandler
         // Replace select with a scalar value like `count`
         $this->statements['selects'] = array($this->raw($type . '(*) as field'));
         $row = $this->get();
+        // dump([$this, $row]);
 
         // Set the select as it was
         if ($mainSelects) {
             $this->statements['selects'] = $mainSelects;
         } else {
             unset($this->statements['selects']);
+        }
+
+        if (false === is_array($row)) {
+            return 0;
         }
 
         if (is_array($row[0])) {
@@ -267,6 +272,7 @@ class QueryBuilderHandler
 
         return 0;
     }
+
 
     /**
      * @param string $type
@@ -325,7 +331,7 @@ class QueryBuilderHandler
 
             list($result, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
 
-            $return = $result->rowCount() === 1 ? $this->wpdb->lastInsertId() : null;
+            $return = $result->rowCount() === 1 ? $this->wpdb->insert_id : null;
         } else {
             // Its a batch insert
             $return = array();
@@ -337,7 +343,7 @@ class QueryBuilderHandler
                 $executionTime += $time;
 
                 if ($result->rowCount() === 1) {
-                    $return[] = $this->wpdb->lastInsertId();
+                    $return[] = $this->wpdb->insert_id;
                 }
             }
         }
@@ -1070,5 +1076,23 @@ class QueryBuilderHandler
     {
         return !empty($this->fetchParameters) ?
             current($this->fetchParameters) : \OBJECT;
+    }
+
+    /**
+     * Gets the first result from an array based on the WPDB Fetch mode.
+     *
+     * @param array $array
+     * @return void
+     */
+    protected function getFirstResultFromArray(array $array)
+    {
+        $arrayKeyFirst = function_exists('array_key_first')
+            ? 'array_key_first'
+            : function (array $arr) {
+                foreach ($arr as $key => $unused) {
+                    return $key;
+                }
+                return null;
+            };
     }
 }

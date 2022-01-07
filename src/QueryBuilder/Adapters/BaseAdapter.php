@@ -34,6 +34,7 @@ abstract class BaseAdapter
      */
     public function select($statements)
     {
+        // dump($statements);
         if (!array_key_exists('tables', $statements)) {
             throw new Exception('No table specified.', 3);
         } elseif (!array_key_exists('selects', $statements)) {
@@ -425,8 +426,6 @@ abstract class BaseAdapter
                     $bindings = array_merge($bindings, $statement['key']->getBindings());
                 } else {
                     // For wheres
-//glynn
-                    // dump($value);
                     $valuePlaceholder = $this->assertType($value);
                     $bindings[] = $value;
                     $criteria .= $statement['joiner'] . ' ' . $key . ' ' . $statement['operator'] . ' '

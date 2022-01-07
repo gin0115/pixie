@@ -6,6 +6,9 @@
 	],
     "settings": {
 		"phpcs.standard": "PSR12",
-    	"phpcbf.standard": "PSR12"
+		"phpcbf.standard": "PSR12",
+		"files.associations": {
+			"*.yaml": "home-assistant"
+		}
 	}
 }

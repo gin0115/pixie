@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1641466973">
-  <project timestamp="1641466973">
+<coverage generated="1641514391">
+  <project timestamp="1641514391">
     <package name="Pixie">
       <file name="/shared/httpd/php/htdocs/pixie/src/AliasFacade.php">
         <class name="Pixie\AliasFacade" namespace="Pixie" fullPackage="Pixie" package="Pixie">
-          <metrics complexity="3" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="0" elements="7" coveredelements="0"/>
+          <metrics complexity="3" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="4" elements="7" coveredelements="5"/>
         </class>
-        <line num="26" type="method" name="__callStatic" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="28" type="stmt" count="0"/>
+        <line num="26" type="method" name="__callStatic" visibility="public" complexity="2" crap="2.15" count="1"/>
+        <line num="28" type="stmt" count="1"/>
         <line num="29" type="stmt" count="0"/>
-        <line num="33" type="stmt" count="0"/>
-        <line num="39" type="method" name="setQueryBuilderInstance" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="41" type="stmt" count="0"/>
-        <line num="42" type="stmt" count="0"/>
-        <metrics loc="43" ncloc="22" classes="1" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="0" elements="7" coveredelements="0"/>
+        <line num="33" type="stmt" count="1"/>
+        <line num="39" type="method" name="setQueryBuilderInstance" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="41" type="stmt" count="1"/>
+        <line num="42" type="stmt" count="1"/>
+        <metrics loc="43" ncloc="22" classes="1" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="4" elements="7" coveredelements="5"/>
       </file>
       <file name="/shared/httpd/php/htdocs/pixie/src/Connection.php">
         <class name="Pixie\Connection" namespace="Pixie">
-          <metrics complexity="15" methods="13" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="27" coveredstatements="14" elements="40" coveredelements="20"/>
+          <metrics complexity="15" methods="13" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="27" coveredstatements="19" elements="40" coveredelements="27"/>
         </class>
-        <line num="47" type="method" name="__construct" visibility="public" complexity="2" crap="2.01" count="8"/>
-        <line num="49" type="stmt" count="8"/>
-        <line num="51" type="stmt" count="8"/>
-        <line num="53" type="stmt" count="8"/>
-        <line num="56" type="stmt" count="8"/>
-        <line num="58" type="stmt" count="8"/>
-        <line num="59" type="stmt" count="0"/>
-        <line num="61" type="stmt" count="8"/>
-        <line num="68" type="method" name="createAlias" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="70" type="stmt" count="0"/>
-        <line num="71" type="stmt" count="0"/>
-        <line num="72" type="stmt" count="0"/>
-        <line num="73" type="stmt" count="0"/>
+        <line num="47" type="method" name="__construct" visibility="public" complexity="2" crap="2" count="17"/>
+        <line num="49" type="stmt" count="17"/>
+        <line num="51" type="stmt" count="17"/>
+        <line num="53" type="stmt" count="17"/>
+        <line num="56" type="stmt" count="17"/>
+        <line num="58" type="stmt" count="17"/>
+        <line num="59" type="stmt" count="1"/>
+        <line num="61" type="stmt" count="17"/>
+        <line num="68" type="method" name="createAlias" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="70" type="stmt" count="1"/>
+        <line num="71" type="stmt" count="1"/>
+        <line num="72" type="stmt" count="1"/>
+        <line num="73" type="stmt" count="1"/>
         <line num="78" type="method" name="getQueryBuilder" visibility="public" complexity="1" crap="2.00" count="0"/>
         <line num="80" type="stmt" count="0"/>
         <line num="87" type="method" name="connect" visibility="protected" complexity="2" crap="6.00" count="0"/>
@@ -41,58 +41,58 @@
         <line num="109" type="method" name="setDbInstance" visibility="public" complexity="1" crap="1" count="1"/>
         <line num="111" type="stmt" count="1"/>
         <line num="112" type="stmt" count="1"/>
-        <line num="118" type="method" name="getDbInstance" visibility="public" complexity="1" crap="1" count="8"/>
-        <line num="120" type="stmt" count="8"/>
+        <line num="118" type="method" name="getDbInstance" visibility="public" complexity="1" crap="1" count="17"/>
+        <line num="120" type="stmt" count="17"/>
         <line num="128" type="method" name="setAdapter" visibility="public" complexity="1" crap="2.00" count="0"/>
         <line num="130" type="stmt" count="0"/>
         <line num="131" type="stmt" count="0"/>
         <line num="137" type="method" name="getAdapter" visibility="public" complexity="1" crap="2.00" count="0"/>
         <line num="139" type="stmt" count="0"/>
-        <line num="147" type="method" name="setAdapterConfig" visibility="public" complexity="1" crap="1" count="8"/>
-        <line num="149" type="stmt" count="8"/>
-        <line num="150" type="stmt" count="8"/>
-        <line num="156" type="method" name="getAdapterConfig" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="158" type="stmt" count="6"/>
-        <line num="164" type="method" name="getContainer" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="166" type="stmt" count="6"/>
-        <line num="172" type="method" name="getEventHandler" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="174" type="stmt" count="6"/>
+        <line num="147" type="method" name="setAdapterConfig" visibility="public" complexity="1" crap="1" count="17"/>
+        <line num="149" type="stmt" count="17"/>
+        <line num="150" type="stmt" count="17"/>
+        <line num="156" type="method" name="getAdapterConfig" visibility="public" complexity="1" crap="1" count="15"/>
+        <line num="158" type="stmt" count="15"/>
+        <line num="164" type="method" name="getContainer" visibility="public" complexity="1" crap="1" count="15"/>
+        <line num="166" type="stmt" count="15"/>
+        <line num="172" type="method" name="getEventHandler" visibility="public" complexity="1" crap="1" count="12"/>
+        <line num="174" type="stmt" count="12"/>
         <line num="180" type="method" name="getStoredConnection" visibility="public" complexity="1" crap="2.00" count="0"/>
         <line num="182" type="stmt" count="0"/>
-        <metrics loc="184" ncloc="102" classes="1" methods="13" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="27" coveredstatements="14" elements="40" coveredelements="20"/>
+        <metrics loc="184" ncloc="102" classes="1" methods="13" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="27" coveredstatements="19" elements="40" coveredelements="27"/>
       </file>
       <file name="/shared/httpd/php/htdocs/pixie/src/EventHandler.php">
         <class name="Pixie\EventHandler" namespace="Pixie">
-          <metrics complexity="12" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="8" elements="27" coveredelements="8"/>
+          <metrics complexity="12" methods="5" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="17" elements="27" coveredelements="18"/>
         </class>
         <line num="21" type="method" name="getEvents" visibility="public" complexity="1" crap="2.00" count="0"/>
         <line num="23" type="stmt" count="0"/>
-        <line num="32" type="method" name="getEvent" visibility="public" complexity="3" crap="3.33" count="6"/>
-        <line num="34" type="stmt" count="6"/>
+        <line num="32" type="method" name="getEvent" visibility="public" complexity="3" crap="3.33" count="12"/>
+        <line num="34" type="stmt" count="12"/>
         <line num="35" type="stmt" count="0"/>
-        <line num="37" type="stmt" count="6"/>
-        <line num="47" type="method" name="registerEvent" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="49" type="stmt" count="0"/>
-        <line num="51" type="stmt" count="0"/>
-        <line num="52" type="stmt" count="0"/>
+        <line num="37" type="stmt" count="12"/>
+        <line num="47" type="method" name="registerEvent" visibility="public" complexity="2" crap="2" count="1"/>
+        <line num="49" type="stmt" count="1"/>
+        <line num="51" type="stmt" count="1"/>
+        <line num="52" type="stmt" count="1"/>
         <line num="60" type="method" name="removeEvent" visibility="public" complexity="1" crap="2.00" count="0"/>
         <line num="62" type="stmt" count="0"/>
         <line num="63" type="stmt" count="0"/>
-        <line num="70" type="method" name="fireEvents" visibility="public" complexity="5" crap="8.90" count="6"/>
-        <line num="72" type="stmt" count="6"/>
-        <line num="73" type="stmt" count="6"/>
-        <line num="77" type="stmt" count="6"/>
-        <line num="80" type="stmt" count="6"/>
-        <line num="82" type="stmt" count="6"/>
-        <line num="84" type="stmt" count="0"/>
-        <line num="87" type="stmt" count="0"/>
-        <line num="88" type="stmt" count="0"/>
-        <line num="90" type="stmt" count="0"/>
-        <line num="91" type="stmt" count="0"/>
-        <line num="92" type="stmt" count="0"/>
+        <line num="70" type="method" name="fireEvents" visibility="public" complexity="5" crap="5.01" count="12"/>
+        <line num="72" type="stmt" count="12"/>
+        <line num="73" type="stmt" count="12"/>
+        <line num="77" type="stmt" count="12"/>
+        <line num="80" type="stmt" count="12"/>
+        <line num="82" type="stmt" count="12"/>
+        <line num="84" type="stmt" count="1"/>
+        <line num="87" type="stmt" count="1"/>
+        <line num="88" type="stmt" count="1"/>
+        <line num="90" type="stmt" count="1"/>
+        <line num="91" type="stmt" count="1"/>
+        <line num="92" type="stmt" count="1"/>
         <line num="93" type="stmt" count="0"/>
-        <line num="97" type="stmt" count="6"/>
-        <metrics loc="98" ncloc="49" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="8" elements="27" coveredelements="8"/>
+        <line num="97" type="stmt" count="12"/>
+        <metrics loc="98" ncloc="49" classes="1" methods="5" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="17" elements="27" coveredelements="18"/>
       </file>
       <file name="/shared/httpd/php/htdocs/pixie/src/Exception.php">
         <class name="Pixie\Exception" namespace="Pixie">
@@ -168,226 +168,226 @@
     <package name="Pixie\QueryBuilder\Adapters">
       <file name="/shared/httpd/php/htdocs/pixie/src/QueryBuilder/Adapters/BaseAdapter.php">
         <class name="Pixie\QueryBuilder\Adapters\BaseAdapter" namespace="Pixie\QueryBuilder\Adapters">
-          <metrics complexity="70" methods="17" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="200" coveredstatements="92" elements="217" coveredelements="95"/>
+          <metrics complexity="70" methods="17" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="200" coveredstatements="93" elements="217" coveredelements="96"/>
         </class>
-        <line num="21" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="23" type="stmt" count="6"/>
-        <line num="24" type="stmt" count="6"/>
-        <line num="25" type="stmt" count="6"/>
-        <line num="35" type="method" name="select" visibility="public" complexity="12" crap="12.73" count="6"/>
-        <line num="37" type="stmt" count="6"/>
-        <line num="38" type="stmt" count="0"/>
-        <line num="39" type="stmt" count="6"/>
-        <line num="40" type="stmt" count="6"/>
-        <line num="44" type="stmt" count="6"/>
-        <line num="46" type="stmt" count="6"/>
-        <line num="50" type="stmt" count="6"/>
-        <line num="52" type="stmt" count="6"/>
-        <line num="53" type="stmt" count="6"/>
-        <line num="54" type="stmt" count="0"/>
-        <line num="58" type="stmt" count="6"/>
-        <line num="59" type="stmt" count="6"/>
-        <line num="60" type="stmt" count="0"/>
+        <line num="21" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="15"/>
+        <line num="23" type="stmt" count="15"/>
+        <line num="24" type="stmt" count="15"/>
+        <line num="25" type="stmt" count="15"/>
+        <line num="35" type="method" name="select" visibility="public" complexity="12" crap="12.73" count="15"/>
+        <line num="38" type="stmt" count="15"/>
+        <line num="39" type="stmt" count="0"/>
+        <line num="40" type="stmt" count="15"/>
+        <line num="41" type="stmt" count="12"/>
+        <line num="45" type="stmt" count="15"/>
+        <line num="47" type="stmt" count="15"/>
+        <line num="51" type="stmt" count="15"/>
+        <line num="53" type="stmt" count="15"/>
+        <line num="54" type="stmt" count="15"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="59" type="stmt" count="15"/>
+        <line num="60" type="stmt" count="15"/>
         <line num="61" type="stmt" count="0"/>
-        <line num="64" type="stmt" count="0"/>
+        <line num="62" type="stmt" count="0"/>
         <line num="65" type="stmt" count="0"/>
-        <line num="70" type="stmt" count="6"/>
-        <line num="71" type="stmt" count="6"/>
-        <line num="74" type="stmt" count="6"/>
-        <line num="77" type="stmt" count="6"/>
-        <line num="80" type="stmt" count="6"/>
-        <line num="81" type="stmt" count="6"/>
-        <line num="82" type="stmt" count="6"/>
-        <line num="83" type="stmt" count="6"/>
-        <line num="84" type="stmt" count="6"/>
-        <line num="85" type="stmt" count="6"/>
-        <line num="86" type="stmt" count="6"/>
-        <line num="87" type="stmt" count="6"/>
-        <line num="88" type="stmt" count="6"/>
-        <line num="89" type="stmt" count="6"/>
-        <line num="90" type="stmt" count="6"/>
-        <line num="93" type="stmt" count="6"/>
-        <line num="95" type="stmt" count="6"/>
-        <line num="96" type="stmt" count="6"/>
-        <line num="100" type="stmt" count="6"/>
-        <line num="111" type="method" name="criteriaOnly" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="113" type="stmt" count="0"/>
+        <line num="66" type="stmt" count="0"/>
+        <line num="71" type="stmt" count="15"/>
+        <line num="72" type="stmt" count="15"/>
+        <line num="75" type="stmt" count="15"/>
+        <line num="78" type="stmt" count="15"/>
+        <line num="81" type="stmt" count="15"/>
+        <line num="82" type="stmt" count="15"/>
+        <line num="83" type="stmt" count="15"/>
+        <line num="84" type="stmt" count="15"/>
+        <line num="85" type="stmt" count="15"/>
+        <line num="86" type="stmt" count="15"/>
+        <line num="87" type="stmt" count="15"/>
+        <line num="88" type="stmt" count="15"/>
+        <line num="89" type="stmt" count="15"/>
+        <line num="90" type="stmt" count="15"/>
+        <line num="91" type="stmt" count="15"/>
+        <line num="94" type="stmt" count="15"/>
+        <line num="96" type="stmt" count="15"/>
+        <line num="97" type="stmt" count="15"/>
+        <line num="101" type="stmt" count="15"/>
+        <line num="112" type="method" name="criteriaOnly" visibility="public" complexity="2" crap="6.00" count="0"/>
         <line num="114" type="stmt" count="0"/>
         <line num="115" type="stmt" count="0"/>
-        <line num="118" type="stmt" count="0"/>
-        <line num="120" type="stmt" count="0"/>
-        <line num="132" type="method" name="doInsert" visibility="private" complexity="6" crap="42.00" count="0"/>
-        <line num="134" type="stmt" count="0"/>
+        <line num="116" type="stmt" count="0"/>
+        <line num="119" type="stmt" count="0"/>
+        <line num="121" type="stmt" count="0"/>
+        <line num="133" type="method" name="doInsert" visibility="private" complexity="6" crap="42.00" count="0"/>
         <line num="135" type="stmt" count="0"/>
-        <line num="138" type="stmt" count="0"/>
-        <line num="140" type="stmt" count="0"/>
-        <line num="142" type="stmt" count="0"/>
+        <line num="136" type="stmt" count="0"/>
+        <line num="139" type="stmt" count="0"/>
+        <line num="141" type="stmt" count="0"/>
         <line num="143" type="stmt" count="0"/>
         <line num="144" type="stmt" count="0"/>
         <line num="145" type="stmt" count="0"/>
-        <line num="147" type="stmt" count="0"/>
+        <line num="146" type="stmt" count="0"/>
         <line num="148" type="stmt" count="0"/>
-        <line num="153" type="stmt" count="0"/>
+        <line num="149" type="stmt" count="0"/>
         <line num="154" type="stmt" count="0"/>
         <line num="155" type="stmt" count="0"/>
         <line num="156" type="stmt" count="0"/>
         <line num="157" type="stmt" count="0"/>
-        <line num="160" type="stmt" count="0"/>
+        <line num="158" type="stmt" count="0"/>
         <line num="161" type="stmt" count="0"/>
         <line num="162" type="stmt" count="0"/>
-        <line num="164" type="stmt" count="0"/>
+        <line num="163" type="stmt" count="0"/>
         <line num="165" type="stmt" count="0"/>
         <line num="166" type="stmt" count="0"/>
-        <line num="169" type="stmt" count="0"/>
-        <line num="171" type="stmt" count="0"/>
-        <line num="183" type="method" name="insert" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="185" type="stmt" count="0"/>
-        <line num="197" type="method" name="insertIgnore" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="199" type="stmt" count="0"/>
-        <line num="211" type="method" name="replace" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="213" type="stmt" count="0"/>
-        <line num="223" type="method" name="getUpdateStatement" visibility="private" complexity="3" crap="12.00" count="0"/>
-        <line num="225" type="stmt" count="0"/>
+        <line num="167" type="stmt" count="0"/>
+        <line num="170" type="stmt" count="0"/>
+        <line num="172" type="stmt" count="0"/>
+        <line num="184" type="method" name="insert" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="186" type="stmt" count="0"/>
+        <line num="198" type="method" name="insertIgnore" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="200" type="stmt" count="0"/>
+        <line num="212" type="method" name="replace" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="214" type="stmt" count="0"/>
+        <line num="224" type="method" name="getUpdateStatement" visibility="private" complexity="3" crap="12.00" count="0"/>
         <line num="226" type="stmt" count="0"/>
-        <line num="228" type="stmt" count="0"/>
+        <line num="227" type="stmt" count="0"/>
         <line num="229" type="stmt" count="0"/>
         <line num="230" type="stmt" count="0"/>
-        <line num="232" type="stmt" count="0"/>
+        <line num="231" type="stmt" count="0"/>
         <line num="233" type="stmt" count="0"/>
-        <line num="237" type="stmt" count="0"/>
+        <line num="234" type="stmt" count="0"/>
         <line num="238" type="stmt" count="0"/>
-        <line num="250" type="method" name="update" visibility="public" complexity="4" crap="20.00" count="0"/>
-        <line num="252" type="stmt" count="0"/>
+        <line num="239" type="stmt" count="0"/>
+        <line num="251" type="method" name="update" visibility="public" complexity="4" crap="20.00" count="0"/>
         <line num="253" type="stmt" count="0"/>
         <line num="254" type="stmt" count="0"/>
         <line num="255" type="stmt" count="0"/>
-        <line num="258" type="stmt" count="0"/>
-        <line num="261" type="stmt" count="0"/>
-        <line num="264" type="stmt" count="0"/>
-        <line num="267" type="stmt" count="0"/>
-        <line num="270" type="stmt" count="0"/>
+        <line num="256" type="stmt" count="0"/>
+        <line num="259" type="stmt" count="0"/>
+        <line num="262" type="stmt" count="0"/>
+        <line num="265" type="stmt" count="0"/>
+        <line num="268" type="stmt" count="0"/>
         <line num="271" type="stmt" count="0"/>
         <line num="272" type="stmt" count="0"/>
         <line num="273" type="stmt" count="0"/>
         <line num="274" type="stmt" count="0"/>
-        <line num="277" type="stmt" count="0"/>
-        <line num="279" type="stmt" count="0"/>
+        <line num="275" type="stmt" count="0"/>
+        <line num="278" type="stmt" count="0"/>
         <line num="280" type="stmt" count="0"/>
-        <line num="291" type="method" name="delete" visibility="public" complexity="3" crap="12.00" count="0"/>
-        <line num="293" type="stmt" count="0"/>
+        <line num="281" type="stmt" count="0"/>
+        <line num="292" type="method" name="delete" visibility="public" complexity="3" crap="12.00" count="0"/>
         <line num="294" type="stmt" count="0"/>
-        <line num="297" type="stmt" count="0"/>
-        <line num="300" type="stmt" count="0"/>
-        <line num="303" type="stmt" count="0"/>
-        <line num="305" type="stmt" count="0"/>
+        <line num="295" type="stmt" count="0"/>
+        <line num="298" type="stmt" count="0"/>
+        <line num="301" type="stmt" count="0"/>
+        <line num="304" type="stmt" count="0"/>
         <line num="306" type="stmt" count="0"/>
         <line num="307" type="stmt" count="0"/>
-        <line num="309" type="stmt" count="0"/>
-        <line num="322" type="method" name="arrayStr" visibility="protected" complexity="5" crap="5.05" count="6"/>
-        <line num="324" type="stmt" count="6"/>
-        <line num="325" type="stmt" count="6"/>
-        <line num="326" type="stmt" count="6"/>
-        <line num="327" type="stmt" count="6"/>
-        <line num="330" type="stmt" count="6"/>
-        <line num="331" type="stmt" count="0"/>
-        <line num="334" type="stmt" count="6"/>
-        <line num="337" type="stmt" count="6"/>
-        <line num="347" type="method" name="concatenateQuery" visibility="protected" complexity="2" crap="2" count="6"/>
-        <line num="349" type="stmt" count="6"/>
-        <line num="350" type="stmt" count="6"/>
-        <line num="351" type="stmt" count="6"/>
-        <line num="353" type="stmt" count="6"/>
-        <line num="364" type="method" name="buildCriteria" visibility="protected" complexity="10" crap="15.53" count="5"/>
-        <line num="366" type="stmt" count="5"/>
-        <line num="367" type="stmt" count="5"/>
-        <line num="368" type="stmt" count="5"/>
-        <line num="369" type="stmt" count="5"/>
-        <line num="370" type="stmt" count="5"/>
-        <line num="372" type="stmt" count="5"/>
-        <line num="377" type="stmt" count="0"/>
+        <line num="308" type="stmt" count="0"/>
+        <line num="310" type="stmt" count="0"/>
+        <line num="323" type="method" name="arrayStr" visibility="protected" complexity="5" crap="5.05" count="15"/>
+        <line num="325" type="stmt" count="15"/>
+        <line num="326" type="stmt" count="15"/>
+        <line num="327" type="stmt" count="15"/>
+        <line num="328" type="stmt" count="15"/>
+        <line num="331" type="stmt" count="15"/>
+        <line num="332" type="stmt" count="0"/>
+        <line num="335" type="stmt" count="15"/>
+        <line num="338" type="stmt" count="15"/>
+        <line num="348" type="method" name="concatenateQuery" visibility="protected" complexity="2" crap="2" count="15"/>
+        <line num="350" type="stmt" count="15"/>
+        <line num="351" type="stmt" count="15"/>
+        <line num="352" type="stmt" count="15"/>
+        <line num="354" type="stmt" count="15"/>
+        <line num="365" type="method" name="buildCriteria" visibility="protected" complexity="10" crap="15.53" count="11"/>
+        <line num="367" type="stmt" count="11"/>
+        <line num="368" type="stmt" count="11"/>
+        <line num="369" type="stmt" count="11"/>
+        <line num="370" type="stmt" count="11"/>
+        <line num="371" type="stmt" count="11"/>
+        <line num="373" type="stmt" count="11"/>
         <line num="378" type="stmt" count="0"/>
         <line num="379" type="stmt" count="0"/>
-        <line num="382" type="stmt" count="0"/>
-        <line num="384" type="stmt" count="0"/>
-        <line num="386" type="stmt" count="0"/>
-        <line num="388" type="stmt" count="0"/>
-        <line num="390" type="stmt" count="0"/>
-        <line num="391" type="stmt" count="5"/>
-        <line num="393" type="stmt" count="2"/>
-        <line num="395" type="stmt" count="2"/>
-        <line num="396" type="stmt" count="2"/>
-        <line num="397" type="stmt" count="0"/>
+        <line num="380" type="stmt" count="0"/>
+        <line num="383" type="stmt" count="0"/>
+        <line num="385" type="stmt" count="0"/>
+        <line num="387" type="stmt" count="0"/>
+        <line num="389" type="stmt" count="0"/>
+        <line num="391" type="stmt" count="0"/>
+        <line num="392" type="stmt" count="11"/>
+        <line num="394" type="stmt" count="3"/>
+        <line num="396" type="stmt" count="3"/>
+        <line num="397" type="stmt" count="3"/>
         <line num="398" type="stmt" count="0"/>
         <line num="399" type="stmt" count="0"/>
-        <line num="401" type="stmt" count="2"/>
-        <line num="402" type="stmt" count="2"/>
-        <line num="404" type="stmt" count="2"/>
-        <line num="405" type="stmt" count="2"/>
-        <line num="408" type="stmt" count="2"/>
-        <line num="409" type="stmt" count="2"/>
-        <line num="410" type="stmt" count="2"/>
-        <line num="412" type="stmt" count="3"/>
-        <line num="413" type="stmt" count="0"/>
-        <line num="417" type="stmt" count="3"/>
-        <line num="421" type="stmt" count="0"/>
+        <line num="400" type="stmt" count="0"/>
+        <line num="402" type="stmt" count="3"/>
+        <line num="403" type="stmt" count="3"/>
+        <line num="405" type="stmt" count="3"/>
+        <line num="406" type="stmt" count="3"/>
+        <line num="409" type="stmt" count="3"/>
+        <line num="410" type="stmt" count="3"/>
+        <line num="411" type="stmt" count="3"/>
+        <line num="413" type="stmt" count="9"/>
+        <line num="414" type="stmt" count="0"/>
+        <line num="418" type="stmt" count="9"/>
         <line num="422" type="stmt" count="0"/>
-        <line num="423" type="stmt" count="3"/>
-        <line num="424" type="stmt" count="0"/>
+        <line num="423" type="stmt" count="0"/>
+        <line num="424" type="stmt" count="9"/>
         <line num="425" type="stmt" count="0"/>
-        <line num="430" type="stmt" count="3"/>
-        <line num="431" type="stmt" count="3"/>
-        <line num="432" type="stmt" count="3"/>
-        <line num="433" type="stmt" count="3"/>
-        <line num="439" type="stmt" count="5"/>
-        <line num="441" type="stmt" count="5"/>
-        <line num="450" type="method" name="assertType" visibility="public" complexity="5" crap="5.05" count="5"/>
-        <line num="453" type="stmt" count="5"/>
-        <line num="454" type="stmt" count="2"/>
-        <line num="455" type="stmt" count="4"/>
-        <line num="456" type="stmt" count="3"/>
-        <line num="457" type="stmt" count="3"/>
-        <line num="458" type="stmt" count="3"/>
-        <line num="459" type="stmt" count="3"/>
-        <line num="461" type="stmt" count="0"/>
-        <line num="472" type="method" name="wrapSanitizer" visibility="public" complexity="5" crap="5.39" count="6"/>
-        <line num="475" type="stmt" count="6"/>
-        <line num="476" type="stmt" count="0"/>
-        <line num="477" type="stmt" count="6"/>
-        <line num="478" type="stmt" count="0"/>
-        <line num="483" type="stmt" count="6"/>
-        <line num="485" type="stmt" count="6"/>
-        <line num="487" type="stmt" count="6"/>
-        <line num="491" type="stmt" count="6"/>
-        <line num="504" type="method" name="buildCriteriaWithType" visibility="protected" complexity="3" crap="3" count="6"/>
-        <line num="506" type="stmt" count="6"/>
-        <line num="507" type="stmt" count="6"/>
-        <line num="509" type="stmt" count="6"/>
-        <line num="511" type="stmt" count="5"/>
-        <line num="513" type="stmt" count="5"/>
-        <line num="514" type="stmt" count="5"/>
-        <line num="518" type="stmt" count="6"/>
-        <line num="528" type="method" name="buildJoin" visibility="protected" complexity="6" crap="28.11" count="6"/>
-        <line num="530" type="stmt" count="6"/>
-        <line num="532" type="stmt" count="6"/>
-        <line num="533" type="stmt" count="6"/>
+        <line num="426" type="stmt" count="0"/>
+        <line num="429" type="stmt" count="9"/>
+        <line num="430" type="stmt" count="9"/>
+        <line num="431" type="stmt" count="9"/>
+        <line num="432" type="stmt" count="9"/>
+        <line num="438" type="stmt" count="11"/>
+        <line num="440" type="stmt" count="11"/>
+        <line num="449" type="method" name="assertType" visibility="public" complexity="5" crap="5.05" count="11"/>
+        <line num="452" type="stmt" count="11"/>
+        <line num="453" type="stmt" count="6"/>
+        <line num="454" type="stmt" count="7"/>
+        <line num="455" type="stmt" count="5"/>
+        <line num="456" type="stmt" count="6"/>
+        <line num="457" type="stmt" count="4"/>
+        <line num="458" type="stmt" count="4"/>
+        <line num="460" type="stmt" count="0"/>
+        <line num="471" type="method" name="wrapSanitizer" visibility="public" complexity="5" crap="5.05" count="15"/>
+        <line num="474" type="stmt" count="15"/>
+        <line num="475" type="stmt" count="1"/>
+        <line num="476" type="stmt" count="15"/>
+        <line num="477" type="stmt" count="0"/>
+        <line num="482" type="stmt" count="15"/>
+        <line num="484" type="stmt" count="15"/>
+        <line num="486" type="stmt" count="15"/>
+        <line num="490" type="stmt" count="15"/>
+        <line num="503" type="method" name="buildCriteriaWithType" visibility="protected" complexity="3" crap="3" count="15"/>
+        <line num="505" type="stmt" count="15"/>
+        <line num="506" type="stmt" count="15"/>
+        <line num="508" type="stmt" count="15"/>
+        <line num="510" type="stmt" count="11"/>
+        <line num="512" type="stmt" count="11"/>
+        <line num="513" type="stmt" count="11"/>
+        <line num="517" type="stmt" count="15"/>
+        <line num="527" type="method" name="buildJoin" visibility="protected" complexity="6" crap="28.11" count="15"/>
+        <line num="529" type="stmt" count="15"/>
+        <line num="531" type="stmt" count="15"/>
+        <line num="532" type="stmt" count="15"/>
+        <line num="535" type="stmt" count="0"/>
         <line num="536" type="stmt" count="0"/>
         <line num="537" type="stmt" count="0"/>
         <line num="538" type="stmt" count="0"/>
         <line num="539" type="stmt" count="0"/>
-        <line num="540" type="stmt" count="0"/>
+        <line num="541" type="stmt" count="0"/>
         <line num="542" type="stmt" count="0"/>
         <line num="543" type="stmt" count="0"/>
-        <line num="544" type="stmt" count="0"/>
-        <line num="546" type="stmt" count="0"/>
+        <line num="545" type="stmt" count="0"/>
+        <line num="548" type="stmt" count="0"/>
         <line num="549" type="stmt" count="0"/>
         <line num="550" type="stmt" count="0"/>
         <line num="551" type="stmt" count="0"/>
         <line num="552" type="stmt" count="0"/>
         <line num="553" type="stmt" count="0"/>
-        <line num="554" type="stmt" count="0"/>
-        <line num="557" type="stmt" count="0"/>
-        <line num="560" type="stmt" count="0"/>
-        <metrics loc="562" ncloc="353" classes="1" methods="17" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="200" coveredstatements="92" elements="217" coveredelements="95"/>
+        <line num="556" type="stmt" count="0"/>
+        <line num="559" type="stmt" count="0"/>
+        <metrics loc="561" ncloc="354" classes="1" methods="17" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="200" coveredstatements="93" elements="217" coveredelements="96"/>
       </file>
       <file name="/shared/httpd/php/htdocs/pixie/src/QueryBuilder/Adapters/Mysql.php">
         <class name="Pixie\QueryBuilder\Adapters\Mysql" namespace="Pixie\QueryBuilder\Adapters">
@@ -442,27 +442,27 @@
       </file>
       <file name="/shared/httpd/php/htdocs/pixie/src/QueryBuilder/QueryBuilderHandler.php">
         <class name="Pixie\QueryBuilder\QueryBuilderHandler" namespace="Pixie\QueryBuilder">
-          <metrics complexity="117" methods="65" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="254" coveredstatements="60" elements="319" coveredelements="67"/>
+          <metrics complexity="121" methods="66" coveredmethods="16" conditionals="0" coveredconditionals="0" statements="263" coveredstatements="97" elements="329" coveredelements="113"/>
         </class>
-        <line num="60" type="method" name="__construct" visibility="public" complexity="4" crap="4.13" count="6"/>
-        <line num="62" type="stmt" count="6"/>
+        <line num="60" type="method" name="__construct" visibility="public" complexity="4" crap="4.13" count="15"/>
+        <line num="62" type="stmt" count="15"/>
         <line num="63" type="stmt" count="0"/>
         <line num="64" type="stmt" count="0"/>
-        <line num="68" type="stmt" count="6"/>
-        <line num="69" type="stmt" count="6"/>
-        <line num="70" type="stmt" count="6"/>
-        <line num="71" type="stmt" count="6"/>
-        <line num="72" type="stmt" count="6"/>
-        <line num="74" type="stmt" count="6"/>
-        <line num="76" type="stmt" count="6"/>
+        <line num="68" type="stmt" count="15"/>
+        <line num="69" type="stmt" count="15"/>
+        <line num="70" type="stmt" count="15"/>
+        <line num="71" type="stmt" count="15"/>
+        <line num="72" type="stmt" count="15"/>
+        <line num="74" type="stmt" count="15"/>
+        <line num="76" type="stmt" count="15"/>
         <line num="77" type="stmt" count="0"/>
-        <line num="81" type="stmt" count="6"/>
-        <line num="82" type="stmt" count="6"/>
-        <line num="83" type="stmt" count="6"/>
-        <line num="87" type="stmt" count="6"/>
-        <line num="95" type="method" name="setFetchMode" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="97" type="stmt" count="6"/>
-        <line num="98" type="stmt" count="6"/>
+        <line num="81" type="stmt" count="15"/>
+        <line num="82" type="stmt" count="15"/>
+        <line num="83" type="stmt" count="15"/>
+        <line num="87" type="stmt" count="15"/>
+        <line num="95" type="method" name="setFetchMode" visibility="public" complexity="1" crap="1" count="15"/>
+        <line num="97" type="stmt" count="15"/>
+        <line num="98" type="stmt" count="15"/>
         <line num="108" type="method" name="asObject" visibility="public" complexity="1" crap="2.00" count="0"/>
         <line num="110" type="stmt" count="0"/>
         <line num="118" type="method" name="newQuery" visibility="public" complexity="2" crap="6.00" count="0"/>
@@ -472,344 +472,354 @@
         <line num="133" type="method" name="query" visibility="public" complexity="1" crap="2.00" count="0"/>
         <line num="135" type="stmt" count="0"/>
         <line num="137" type="stmt" count="0"/>
-        <line num="146" type="method" name="statement" visibility="public" complexity="2" crap="2" count="6"/>
-        <line num="149" type="stmt" count="6"/>
-        <line num="150" type="stmt" count="6"/>
-        <line num="152" type="stmt" count="6"/>
-        <line num="161" type="method" name="get" visibility="public" complexity="3" crap="3.00" count="6"/>
-        <line num="164" type="stmt" count="6"/>
-        <line num="165" type="stmt" count="6"/>
+        <line num="146" type="method" name="statement" visibility="public" complexity="2" crap="2" count="12"/>
+        <line num="149" type="stmt" count="12"/>
+        <line num="150" type="stmt" count="12"/>
+        <line num="152" type="stmt" count="12"/>
+        <line num="161" type="method" name="get" visibility="public" complexity="3" crap="3.00" count="12"/>
+        <line num="164" type="stmt" count="12"/>
+        <line num="165" type="stmt" count="12"/>
         <line num="166" type="stmt" count="0"/>
-        <line num="168" type="stmt" count="6"/>
-        <line num="169" type="stmt" count="6"/>
-        <line num="170" type="stmt" count="6"/>
-        <line num="172" type="stmt" count="6"/>
-        <line num="173" type="stmt" count="6"/>
-        <line num="174" type="stmt" count="6"/>
-        <line num="178" type="stmt" count="6"/>
-        <line num="179" type="stmt" count="6"/>
-        <line num="180" type="stmt" count="6"/>
-        <line num="181" type="stmt" count="6"/>
-        <line num="182" type="stmt" count="6"/>
-        <line num="183" type="stmt" count="6"/>
-        <line num="191" type="method" name="first" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="193" type="stmt" count="0"/>
-        <line num="194" type="stmt" count="0"/>
-        <line num="195" type="stmt" count="0"/>
-        <line num="204" type="method" name="findAll" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="206" type="stmt" count="0"/>
-        <line num="207" type="stmt" count="0"/>
-        <line num="216" type="method" name="find" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="218" type="stmt" count="0"/>
-        <line num="219" type="stmt" count="0"/>
-        <line num="227" type="method" name="count" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="230" type="stmt" count="0"/>
-        <line num="232" type="stmt" count="0"/>
-        <line num="233" type="stmt" count="0"/>
-        <line num="234" type="stmt" count="0"/>
-        <line num="236" type="stmt" count="0"/>
-        <line num="237" type="stmt" count="0"/>
-        <line num="239" type="stmt" count="0"/>
-        <line num="247" type="method" name="aggregate" visibility="protected" complexity="5" crap="30.00" count="0"/>
-        <line num="250" type="stmt" count="0"/>
-        <line num="252" type="stmt" count="0"/>
-        <line num="253" type="stmt" count="0"/>
-        <line num="256" type="stmt" count="0"/>
-        <line num="257" type="stmt" count="0"/>
-        <line num="259" type="stmt" count="0"/>
-        <line num="262" type="stmt" count="0"/>
-        <line num="263" type="stmt" count="0"/>
-        <line num="264" type="stmt" count="0"/>
-        <line num="265" type="stmt" count="0"/>
+        <line num="168" type="stmt" count="12"/>
+        <line num="169" type="stmt" count="12"/>
+        <line num="170" type="stmt" count="12"/>
+        <line num="172" type="stmt" count="12"/>
+        <line num="173" type="stmt" count="12"/>
+        <line num="174" type="stmt" count="12"/>
+        <line num="178" type="stmt" count="12"/>
+        <line num="179" type="stmt" count="12"/>
+        <line num="180" type="stmt" count="12"/>
+        <line num="181" type="stmt" count="12"/>
+        <line num="182" type="stmt" count="12"/>
+        <line num="183" type="stmt" count="12"/>
+        <line num="191" type="method" name="first" visibility="public" complexity="2" crap="2" count="2"/>
+        <line num="193" type="stmt" count="2"/>
+        <line num="194" type="stmt" count="2"/>
+        <line num="195" type="stmt" count="2"/>
+        <line num="204" type="method" name="findAll" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="206" type="stmt" count="1"/>
+        <line num="207" type="stmt" count="1"/>
+        <line num="216" type="method" name="find" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="218" type="stmt" count="1"/>
+        <line num="219" type="stmt" count="1"/>
+        <line num="227" type="method" name="count" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="230" type="stmt" count="1"/>
+        <line num="232" type="stmt" count="1"/>
+        <line num="233" type="stmt" count="1"/>
+        <line num="234" type="stmt" count="1"/>
+        <line num="236" type="stmt" count="1"/>
+        <line num="237" type="stmt" count="1"/>
+        <line num="239" type="stmt" count="1"/>
+        <line num="247" type="method" name="aggregate" visibility="protected" complexity="6" crap="9.54" count="1"/>
+        <line num="250" type="stmt" count="1"/>
+        <line num="252" type="stmt" count="1"/>
+        <line num="253" type="stmt" count="1"/>
+        <line num="257" type="stmt" count="1"/>
+        <line num="258" type="stmt" count="1"/>
+        <line num="260" type="stmt" count="0"/>
+        <line num="263" type="stmt" count="1"/>
+        <line num="264" type="stmt" count="1"/>
+        <line num="267" type="stmt" count="0"/>
         <line num="268" type="stmt" count="0"/>
-        <line num="278" type="method" name="getQuery" visibility="public" complexity="2" crap="2.01" count="6"/>
-        <line num="280" type="stmt" count="6"/>
-        <line num="281" type="stmt" count="6"/>
-        <line num="282" type="stmt" count="0"/>
-        <line num="285" type="stmt" count="6"/>
-        <line num="287" type="stmt" count="6"/>
-        <line num="288" type="stmt" count="6"/>
-        <line num="289" type="stmt" count="6"/>
-        <line num="299" type="method" name="subQuery" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="301" type="stmt" count="0"/>
-        <line num="302" type="stmt" count="0"/>
-        <line num="303" type="stmt" count="0"/>
-        <line num="306" type="stmt" count="0"/>
-        <line num="314" type="method" name="doInsert" visibility="private" complexity="6" crap="42.00" count="0"/>
-        <line num="316" type="stmt" count="0"/>
-        <line num="317" type="stmt" count="0"/>
-        <line num="318" type="stmt" count="0"/>
+        <line num="269" type="stmt" count="0"/>
+        <line num="270" type="stmt" count="0"/>
+        <line num="273" type="stmt" count="0"/>
+        <line num="284" type="method" name="getQuery" visibility="public" complexity="2" crap="2.01" count="15"/>
+        <line num="286" type="stmt" count="15"/>
+        <line num="287" type="stmt" count="15"/>
+        <line num="288" type="stmt" count="0"/>
+        <line num="291" type="stmt" count="15"/>
+        <line num="293" type="stmt" count="15"/>
+        <line num="294" type="stmt" count="15"/>
+        <line num="295" type="stmt" count="15"/>
+        <line num="305" type="method" name="subQuery" visibility="public" complexity="2" crap="6.00" count="0"/>
+        <line num="307" type="stmt" count="0"/>
+        <line num="308" type="stmt" count="0"/>
+        <line num="309" type="stmt" count="0"/>
+        <line num="312" type="stmt" count="0"/>
+        <line num="320" type="method" name="doInsert" visibility="private" complexity="6" crap="42.00" count="0"/>
+        <line num="322" type="stmt" count="0"/>
         <line num="323" type="stmt" count="0"/>
         <line num="324" type="stmt" count="0"/>
-        <line num="326" type="stmt" count="0"/>
-        <line num="328" type="stmt" count="0"/>
-        <line num="331" type="stmt" count="0"/>
+        <line num="329" type="stmt" count="0"/>
+        <line num="330" type="stmt" count="0"/>
         <line num="332" type="stmt" count="0"/>
-        <line num="333" type="stmt" count="0"/>
         <line num="334" type="stmt" count="0"/>
-        <line num="336" type="stmt" count="0"/>
         <line num="337" type="stmt" count="0"/>
+        <line num="338" type="stmt" count="0"/>
         <line num="339" type="stmt" count="0"/>
         <line num="340" type="stmt" count="0"/>
+        <line num="342" type="stmt" count="0"/>
+        <line num="343" type="stmt" count="0"/>
         <line num="345" type="stmt" count="0"/>
-        <line num="347" type="stmt" count="0"/>
-        <line num="355" type="method" name="insert" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="357" type="stmt" count="0"/>
-        <line num="365" type="method" name="insertIgnore" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="367" type="stmt" count="0"/>
-        <line num="375" type="method" name="replace" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="377" type="stmt" count="0"/>
-        <line num="385" type="method" name="update" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="387" type="stmt" count="0"/>
-        <line num="388" type="stmt" count="0"/>
-        <line num="389" type="stmt" count="0"/>
-        <line num="392" type="stmt" count="0"/>
+        <line num="346" type="stmt" count="0"/>
+        <line num="351" type="stmt" count="0"/>
+        <line num="353" type="stmt" count="0"/>
+        <line num="361" type="method" name="insert" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="363" type="stmt" count="0"/>
+        <line num="371" type="method" name="insertIgnore" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="373" type="stmt" count="0"/>
+        <line num="381" type="method" name="replace" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="383" type="stmt" count="0"/>
+        <line num="391" type="method" name="update" visibility="public" complexity="2" crap="6.00" count="0"/>
+        <line num="393" type="stmt" count="0"/>
         <line num="394" type="stmt" count="0"/>
         <line num="395" type="stmt" count="0"/>
-        <line num="397" type="stmt" count="0"/>
-        <line num="405" type="method" name="updateOrInsert" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="407" type="stmt" count="0"/>
-        <line num="408" type="stmt" count="0"/>
-        <line num="410" type="stmt" count="0"/>
-        <line num="419" type="method" name="onDuplicateKeyUpdate" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="421" type="stmt" count="0"/>
-        <line num="422" type="stmt" count="0"/>
-        <line num="428" type="method" name="delete" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="430" type="stmt" count="0"/>
-        <line num="431" type="stmt" count="0"/>
-        <line num="432" type="stmt" count="0"/>
-        <line num="435" type="stmt" count="0"/>
+        <line num="398" type="stmt" count="0"/>
+        <line num="400" type="stmt" count="0"/>
+        <line num="401" type="stmt" count="0"/>
+        <line num="403" type="stmt" count="0"/>
+        <line num="411" type="method" name="updateOrInsert" visibility="public" complexity="2" crap="6.00" count="0"/>
+        <line num="413" type="stmt" count="0"/>
+        <line num="414" type="stmt" count="0"/>
+        <line num="416" type="stmt" count="0"/>
+        <line num="425" type="method" name="onDuplicateKeyUpdate" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="427" type="stmt" count="0"/>
+        <line num="428" type="stmt" count="0"/>
+        <line num="434" type="method" name="delete" visibility="public" complexity="2" crap="6.00" count="0"/>
+        <line num="436" type="stmt" count="0"/>
         <line num="437" type="stmt" count="0"/>
         <line num="438" type="stmt" count="0"/>
-        <line num="440" type="stmt" count="0"/>
-        <line num="449" type="method" name="table" visibility="public" complexity="2" crap="2" count="6"/>
-        <line num="451" type="stmt" count="6"/>
-        <line num="454" type="stmt" count="6"/>
-        <line num="457" type="stmt" count="6"/>
-        <line num="458" type="stmt" count="6"/>
-        <line num="459" type="stmt" count="6"/>
-        <line num="460" type="stmt" count="6"/>
-        <line num="468" type="method" name="from" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="470" type="stmt" count="0"/>
-        <line num="471" type="stmt" count="0"/>
-        <line num="474" type="stmt" count="0"/>
-        <line num="475" type="stmt" count="0"/>
+        <line num="441" type="stmt" count="0"/>
+        <line num="443" type="stmt" count="0"/>
+        <line num="444" type="stmt" count="0"/>
+        <line num="446" type="stmt" count="0"/>
+        <line num="455" type="method" name="table" visibility="public" complexity="2" crap="2" count="15"/>
+        <line num="457" type="stmt" count="15"/>
+        <line num="460" type="stmt" count="14"/>
+        <line num="463" type="stmt" count="15"/>
+        <line num="464" type="stmt" count="15"/>
+        <line num="465" type="stmt" count="15"/>
+        <line num="466" type="stmt" count="15"/>
+        <line num="474" type="method" name="from" visibility="public" complexity="2" crap="6.00" count="0"/>
         <line num="476" type="stmt" count="0"/>
-        <line num="484" type="method" name="select" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="486" type="stmt" count="0"/>
-        <line num="487" type="stmt" count="0"/>
-        <line num="490" type="stmt" count="0"/>
-        <line num="491" type="stmt" count="0"/>
-        <line num="492" type="stmt" count="0"/>
-        <line num="500" type="method" name="selectDistinct" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="502" type="stmt" count="0"/>
-        <line num="503" type="stmt" count="0"/>
-        <line num="504" type="stmt" count="0"/>
-        <line num="512" type="method" name="groupBy" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="514" type="stmt" count="0"/>
-        <line num="515" type="stmt" count="0"/>
-        <line num="516" type="stmt" count="0"/>
-        <line num="525" type="method" name="orderBy" visibility="public" complexity="5" crap="30.00" count="0"/>
-        <line num="527" type="stmt" count="0"/>
-        <line num="528" type="stmt" count="0"/>
-        <line num="531" type="stmt" count="0"/>
-        <line num="532" type="stmt" count="0"/>
+        <line num="477" type="stmt" count="0"/>
+        <line num="480" type="stmt" count="0"/>
+        <line num="481" type="stmt" count="0"/>
+        <line num="482" type="stmt" count="0"/>
+        <line num="490" type="method" name="select" visibility="public" complexity="2" crap="2" count="3"/>
+        <line num="492" type="stmt" count="3"/>
+        <line num="493" type="stmt" count="3"/>
+        <line num="496" type="stmt" count="3"/>
+        <line num="497" type="stmt" count="3"/>
+        <line num="498" type="stmt" count="3"/>
+        <line num="506" type="method" name="selectDistinct" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="508" type="stmt" count="1"/>
+        <line num="509" type="stmt" count="1"/>
+        <line num="510" type="stmt" count="1"/>
+        <line num="518" type="method" name="groupBy" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="520" type="stmt" count="0"/>
+        <line num="521" type="stmt" count="0"/>
+        <line num="522" type="stmt" count="0"/>
+        <line num="531" type="method" name="orderBy" visibility="public" complexity="5" crap="30.00" count="0"/>
         <line num="533" type="stmt" count="0"/>
         <line num="534" type="stmt" count="0"/>
-        <line num="535" type="stmt" count="0"/>
-        <line num="536" type="stmt" count="0"/>
+        <line num="537" type="stmt" count="0"/>
         <line num="538" type="stmt" count="0"/>
         <line num="539" type="stmt" count="0"/>
+        <line num="540" type="stmt" count="0"/>
         <line num="541" type="stmt" count="0"/>
+        <line num="542" type="stmt" count="0"/>
         <line num="544" type="stmt" count="0"/>
-        <line num="552" type="method" name="limit" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="554" type="stmt" count="0"/>
-        <line num="555" type="stmt" count="0"/>
-        <line num="563" type="method" name="offset" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="565" type="stmt" count="0"/>
-        <line num="566" type="stmt" count="0"/>
-        <line num="577" type="method" name="having" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="579" type="stmt" count="0"/>
-        <line num="580" type="stmt" count="0"/>
-        <line num="581" type="stmt" count="0"/>
-        <line num="591" type="method" name="orHaving" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="593" type="stmt" count="0"/>
-        <line num="603" type="method" name="where" visibility="public" complexity="2" crap="2.50" count="5"/>
-        <line num="606" type="stmt" count="5"/>
-        <line num="607" type="stmt" count="0"/>
-        <line num="608" type="stmt" count="0"/>
-        <line num="610" type="stmt" count="5"/>
-        <line num="620" type="method" name="orWhere" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="623" type="stmt" count="0"/>
-        <line num="624" type="stmt" count="0"/>
-        <line num="625" type="stmt" count="0"/>
-        <line num="628" type="stmt" count="0"/>
-        <line num="638" type="method" name="whereNot" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="641" type="stmt" count="0"/>
-        <line num="642" type="stmt" count="0"/>
-        <line num="643" type="stmt" count="0"/>
-        <line num="645" type="stmt" count="0"/>
-        <line num="655" type="method" name="orWhereNot" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="658" type="stmt" count="0"/>
-        <line num="659" type="stmt" count="0"/>
-        <line num="660" type="stmt" count="0"/>
-        <line num="662" type="stmt" count="0"/>
-        <line num="671" type="method" name="whereIn" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="673" type="stmt" count="0"/>
-        <line num="682" type="method" name="whereNotIn" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="684" type="stmt" count="0"/>
-        <line num="693" type="method" name="orWhereIn" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="695" type="stmt" count="0"/>
-        <line num="704" type="method" name="orWhereNotIn" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="706" type="stmt" count="0"/>
-        <line num="716" type="method" name="whereBetween" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="718" type="stmt" count="0"/>
-        <line num="728" type="method" name="orWhereBetween" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="730" type="stmt" count="0"/>
-        <line num="737" type="method" name="whereNull" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="739" type="stmt" count="0"/>
-        <line num="746" type="method" name="whereNotNull" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="748" type="stmt" count="0"/>
-        <line num="755" type="method" name="orWhereNull" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="757" type="stmt" count="0"/>
-        <line num="764" type="method" name="orWhereNotNull" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="766" type="stmt" count="0"/>
-        <line num="769" type="method" name="whereNullHandler" visibility="protected" complexity="1" crap="2.00" count="0"/>
-        <line num="771" type="stmt" count="0"/>
+        <line num="545" type="stmt" count="0"/>
+        <line num="547" type="stmt" count="0"/>
+        <line num="550" type="stmt" count="0"/>
+        <line num="558" type="method" name="limit" visibility="public" complexity="1" crap="1" count="2"/>
+        <line num="560" type="stmt" count="2"/>
+        <line num="561" type="stmt" count="2"/>
+        <line num="569" type="method" name="offset" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="571" type="stmt" count="0"/>
+        <line num="572" type="stmt" count="0"/>
+        <line num="583" type="method" name="having" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="585" type="stmt" count="0"/>
+        <line num="586" type="stmt" count="0"/>
+        <line num="587" type="stmt" count="0"/>
+        <line num="597" type="method" name="orHaving" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="599" type="stmt" count="0"/>
+        <line num="609" type="method" name="where" visibility="public" complexity="2" crap="2.50" count="11"/>
+        <line num="612" type="stmt" count="11"/>
+        <line num="613" type="stmt" count="0"/>
+        <line num="614" type="stmt" count="0"/>
+        <line num="616" type="stmt" count="11"/>
+        <line num="626" type="method" name="orWhere" visibility="public" complexity="2" crap="6.00" count="0"/>
+        <line num="629" type="stmt" count="0"/>
+        <line num="630" type="stmt" count="0"/>
+        <line num="631" type="stmt" count="0"/>
+        <line num="634" type="stmt" count="0"/>
+        <line num="644" type="method" name="whereNot" visibility="public" complexity="2" crap="6.00" count="0"/>
+        <line num="647" type="stmt" count="0"/>
+        <line num="648" type="stmt" count="0"/>
+        <line num="649" type="stmt" count="0"/>
+        <line num="651" type="stmt" count="0"/>
+        <line num="661" type="method" name="orWhereNot" visibility="public" complexity="2" crap="6.00" count="0"/>
+        <line num="664" type="stmt" count="0"/>
+        <line num="665" type="stmt" count="0"/>
+        <line num="666" type="stmt" count="0"/>
+        <line num="668" type="stmt" count="0"/>
+        <line num="677" type="method" name="whereIn" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="679" type="stmt" count="0"/>
+        <line num="688" type="method" name="whereNotIn" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="690" type="stmt" count="0"/>
+        <line num="699" type="method" name="orWhereIn" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="701" type="stmt" count="0"/>
+        <line num="710" type="method" name="orWhereNotIn" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="712" type="stmt" count="0"/>
+        <line num="722" type="method" name="whereBetween" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="724" type="stmt" count="0"/>
+        <line num="734" type="method" name="orWhereBetween" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="736" type="stmt" count="0"/>
+        <line num="743" type="method" name="whereNull" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="745" type="stmt" count="0"/>
+        <line num="752" type="method" name="whereNotNull" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="754" type="stmt" count="0"/>
+        <line num="761" type="method" name="orWhereNull" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="763" type="stmt" count="0"/>
+        <line num="770" type="method" name="orWhereNotNull" visibility="public" complexity="1" crap="2.00" count="0"/>
         <line num="772" type="stmt" count="0"/>
-        <line num="784" type="method" name="join" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="786" type="stmt" count="0"/>
-        <line num="788" type="stmt" count="0"/>
-        <line num="789" type="stmt" count="0"/>
+        <line num="775" type="method" name="whereNullHandler" visibility="protected" complexity="1" crap="2.00" count="0"/>
+        <line num="777" type="stmt" count="0"/>
+        <line num="778" type="stmt" count="0"/>
+        <line num="790" type="method" name="join" visibility="public" complexity="2" crap="6.00" count="0"/>
+        <line num="792" type="stmt" count="0"/>
         <line num="794" type="stmt" count="0"/>
         <line num="795" type="stmt" count="0"/>
-        <line num="797" type="stmt" count="0"/>
-        <line num="798" type="stmt" count="0"/>
         <line num="800" type="stmt" count="0"/>
-        <line num="802" type="stmt" count="0"/>
-        <line num="812" type="method" name="transaction" visibility="public" complexity="3" crap="12.00" count="0"/>
-        <line num="816" type="stmt" count="0"/>
-        <line num="819" type="stmt" count="0"/>
+        <line num="801" type="stmt" count="0"/>
+        <line num="803" type="stmt" count="0"/>
+        <line num="804" type="stmt" count="0"/>
+        <line num="806" type="stmt" count="0"/>
+        <line num="808" type="stmt" count="0"/>
+        <line num="818" type="method" name="transaction" visibility="public" complexity="3" crap="12.00" count="0"/>
         <line num="822" type="stmt" count="0"/>
-        <line num="826" type="stmt" count="0"/>
+        <line num="825" type="stmt" count="0"/>
         <line num="828" type="stmt" count="0"/>
-        <line num="829" type="stmt" count="0"/>
-        <line num="831" type="stmt" count="0"/>
         <line num="832" type="stmt" count="0"/>
         <line num="834" type="stmt" count="0"/>
         <line num="835" type="stmt" count="0"/>
-        <line num="847" type="method" name="leftJoin" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="849" type="stmt" count="0"/>
-        <line num="860" type="method" name="rightJoin" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="862" type="stmt" count="0"/>
-        <line num="873" type="method" name="innerJoin" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="875" type="stmt" count="0"/>
-        <line num="886" type="method" name="raw" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="888" type="stmt" count="0"/>
-        <line num="896" type="method" name="pdo" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="898" type="stmt" count="0"/>
-        <line num="906" type="method" name="setConnection" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="908" type="stmt" count="0"/>
-        <line num="909" type="stmt" count="0"/>
-        <line num="915" type="method" name="getConnection" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="917" type="stmt" count="0"/>
-        <line num="928" type="method" name="whereHandler" visibility="protected" complexity="1" crap="1" count="5"/>
-        <line num="930" type="stmt" count="5"/>
-        <line num="931" type="stmt" count="5"/>
-        <line num="932" type="stmt" count="5"/>
-        <line num="943" type="method" name="addTablePrefix" visibility="public" complexity="11" crap="95.98" count="6"/>
-        <line num="945" type="stmt" count="6"/>
-        <line num="946" type="stmt" count="6"/>
-        <line num="952" type="stmt" count="0"/>
-        <line num="953" type="stmt" count="0"/>
-        <line num="954" type="stmt" count="0"/>
-        <line num="956" type="stmt" count="0"/>
+        <line num="837" type="stmt" count="0"/>
+        <line num="838" type="stmt" count="0"/>
+        <line num="840" type="stmt" count="0"/>
+        <line num="841" type="stmt" count="0"/>
+        <line num="853" type="method" name="leftJoin" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="855" type="stmt" count="0"/>
+        <line num="866" type="method" name="rightJoin" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="868" type="stmt" count="0"/>
+        <line num="879" type="method" name="innerJoin" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="881" type="stmt" count="0"/>
+        <line num="892" type="method" name="raw" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="894" type="stmt" count="1"/>
+        <line num="902" type="method" name="pdo" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="904" type="stmt" count="0"/>
+        <line num="912" type="method" name="setConnection" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="914" type="stmt" count="0"/>
+        <line num="915" type="stmt" count="0"/>
+        <line num="921" type="method" name="getConnection" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="923" type="stmt" count="0"/>
+        <line num="934" type="method" name="whereHandler" visibility="protected" complexity="1" crap="1" count="11"/>
+        <line num="936" type="stmt" count="11"/>
+        <line num="937" type="stmt" count="11"/>
+        <line num="938" type="stmt" count="11"/>
+        <line num="949" type="method" name="addTablePrefix" visibility="public" complexity="11" crap="95.98" count="15"/>
+        <line num="951" type="stmt" count="15"/>
+        <line num="952" type="stmt" count="15"/>
+        <line num="958" type="stmt" count="0"/>
         <line num="959" type="stmt" count="0"/>
-        <line num="961" type="stmt" count="0"/>
-        <line num="963" type="stmt" count="0"/>
-        <line num="964" type="stmt" count="0"/>
+        <line num="960" type="stmt" count="0"/>
+        <line num="962" type="stmt" count="0"/>
         <line num="965" type="stmt" count="0"/>
+        <line num="967" type="stmt" count="0"/>
+        <line num="969" type="stmt" count="0"/>
         <line num="970" type="stmt" count="0"/>
         <line num="971" type="stmt" count="0"/>
-        <line num="972" type="stmt" count="0"/>
-        <line num="975" type="stmt" count="0"/>
         <line num="976" type="stmt" count="0"/>
-        <line num="979" type="stmt" count="0"/>
-        <line num="983" type="stmt" count="0"/>
-        <line num="990" type="method" name="addStatement" visibility="protected" complexity="3" crap="3.33" count="6"/>
-        <line num="992" type="stmt" count="6"/>
-        <line num="993" type="stmt" count="0"/>
-        <line num="996" type="stmt" count="6"/>
-        <line num="997" type="stmt" count="6"/>
-        <line num="999" type="stmt" count="0"/>
-        <line num="1001" type="stmt" count="6"/>
-        <line num="1009" type="method" name="getEvent" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="1011" type="stmt" count="0"/>
-        <line num="1021" type="method" name="registerEvent" visibility="public" complexity="3" crap="12.00" count="0"/>
-        <line num="1023" type="stmt" count="0"/>
-        <line num="1025" type="stmt" count="0"/>
-        <line num="1026" type="stmt" count="0"/>
-        <line num="1029" type="stmt" count="0"/>
-        <line num="1038" type="method" name="removeEvent" visibility="public" complexity="2" crap="6.00" count="0"/>
-        <line num="1040" type="stmt" count="0"/>
-        <line num="1041" type="stmt" count="0"/>
-        <line num="1044" type="stmt" count="0"/>
-        <line num="1051" type="method" name="fireEvents" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="1053" type="stmt" count="6"/>
-        <line num="1054" type="stmt" count="6"/>
-        <line num="1055" type="stmt" count="6"/>
-        <line num="1061" type="method" name="getStatements" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="1063" type="stmt" count="6"/>
-        <line num="1069" type="method" name="getFetchMode" visibility="public" complexity="2" crap="2" count="6"/>
-        <line num="1071" type="stmt" count="6"/>
-        <line num="1072" type="stmt" count="6"/>
-        <metrics loc="1074" ncloc="607" classes="1" methods="65" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="254" coveredstatements="60" elements="319" coveredelements="67"/>
+        <line num="977" type="stmt" count="0"/>
+        <line num="978" type="stmt" count="0"/>
+        <line num="981" type="stmt" count="0"/>
+        <line num="982" type="stmt" count="0"/>
+        <line num="985" type="stmt" count="0"/>
+        <line num="989" type="stmt" count="0"/>
+        <line num="996" type="method" name="addStatement" visibility="protected" complexity="3" crap="3.04" count="15"/>
+        <line num="998" type="stmt" count="15"/>
+        <line num="999" type="stmt" count="1"/>
+        <line num="1002" type="stmt" count="15"/>
+        <line num="1003" type="stmt" count="15"/>
+        <line num="1005" type="stmt" count="0"/>
+        <line num="1007" type="stmt" count="15"/>
+        <line num="1015" type="method" name="getEvent" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="1017" type="stmt" count="0"/>
+        <line num="1027" type="method" name="registerEvent" visibility="public" complexity="3" crap="3" count="1"/>
+        <line num="1029" type="stmt" count="1"/>
+        <line num="1031" type="stmt" count="1"/>
+        <line num="1032" type="stmt" count="1"/>
+        <line num="1035" type="stmt" count="1"/>
+        <line num="1044" type="method" name="removeEvent" visibility="public" complexity="2" crap="6.00" count="0"/>
+        <line num="1046" type="stmt" count="0"/>
+        <line num="1047" type="stmt" count="0"/>
+        <line num="1050" type="stmt" count="0"/>
+        <line num="1057" type="method" name="fireEvents" visibility="public" complexity="1" crap="1" count="12"/>
+        <line num="1059" type="stmt" count="12"/>
+        <line num="1060" type="stmt" count="12"/>
+        <line num="1061" type="stmt" count="12"/>
+        <line num="1067" type="method" name="getStatements" visibility="public" complexity="1" crap="1" count="12"/>
+        <line num="1069" type="stmt" count="12"/>
+        <line num="1075" type="method" name="getFetchMode" visibility="public" complexity="2" crap="2" count="15"/>
+        <line num="1077" type="stmt" count="15"/>
+        <line num="1078" type="stmt" count="15"/>
+        <line num="1087" type="method" name="getFirstResultFromArray" visibility="protected" complexity="3" crap="12.00" count="0"/>
+        <line num="1089" type="stmt" count="0"/>
+        <line num="1090" type="stmt" count="0"/>
+        <line num="1092" type="stmt" count="0"/>
+        <line num="1093" type="stmt" count="0"/>
+        <line num="1095" type="stmt" count="0"/>
+        <line num="1096" type="stmt" count="0"/>
+        <line num="1097" type="stmt" count="0"/>
+        <metrics loc="1098" ncloc="623" classes="1" methods="66" coveredmethods="16" conditionals="0" coveredconditionals="0" statements="263" coveredstatements="97" elements="329" coveredelements="113"/>
       </file>
       <file name="/shared/httpd/php/htdocs/pixie/src/QueryBuilder/QueryObject.php">
         <class name="Pixie\QueryBuilder\QueryObject" namespace="Pixie\QueryBuilder">
           <metrics complexity="10" methods="5" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="6" elements="26" coveredelements="9"/>
         </class>
-        <line num="21" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="23" type="stmt" count="6"/>
-        <line num="24" type="stmt" count="6"/>
-        <line num="25" type="stmt" count="6"/>
-        <line num="26" type="stmt" count="6"/>
-        <line num="31" type="method" name="getSql" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="33" type="stmt" count="6"/>
-        <line num="39" type="method" name="getBindings" visibility="public" complexity="1" crap="1" count="6"/>
-        <line num="41" type="stmt" count="6"/>
-        <line num="49" type="method" name="getRawSql" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="51" type="stmt" count="0"/>
-        <line num="66" type="method" name="interpolateQuery" visibility="protected" complexity="6" crap="42.00" count="0"/>
-        <line num="68" type="stmt" count="0"/>
-        <line num="69" type="stmt" count="0"/>
-        <line num="72" type="stmt" count="0"/>
-        <line num="73" type="stmt" count="0"/>
+        <line num="23" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="15"/>
+        <line num="25" type="stmt" count="15"/>
+        <line num="26" type="stmt" count="15"/>
+        <line num="27" type="stmt" count="15"/>
+        <line num="28" type="stmt" count="15"/>
+        <line num="33" type="method" name="getSql" visibility="public" complexity="1" crap="1" count="15"/>
+        <line num="35" type="stmt" count="15"/>
+        <line num="41" type="method" name="getBindings" visibility="public" complexity="1" crap="1" count="12"/>
+        <line num="43" type="stmt" count="12"/>
+        <line num="51" type="method" name="getRawSql" visibility="public" complexity="1" crap="2.00" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="68" type="method" name="interpolateQuery" visibility="protected" complexity="6" crap="42.00" count="0"/>
+        <line num="70" type="stmt" count="0"/>
+        <line num="71" type="stmt" count="0"/>
         <line num="74" type="stmt" count="0"/>
+        <line num="75" type="stmt" count="0"/>
         <line num="76" type="stmt" count="0"/>
-        <line num="79" type="stmt" count="0"/>
-        <line num="80" type="stmt" count="0"/>
-        <line num="83" type="stmt" count="0"/>
-        <line num="84" type="stmt" count="0"/>
-        <line num="87" type="stmt" count="0"/>
-        <line num="88" type="stmt" count="0"/>
-        <line num="92" type="stmt" count="0"/>
+        <line num="78" type="stmt" count="0"/>
+        <line num="81" type="stmt" count="0"/>
+        <line num="82" type="stmt" count="0"/>
+        <line num="85" type="stmt" count="0"/>
+        <line num="86" type="stmt" count="0"/>
+        <line num="89" type="stmt" count="0"/>
+        <line num="90" type="stmt" count="0"/>
         <line num="94" type="stmt" count="0"/>
-        <metrics loc="96" ncloc="62" classes="1" methods="5" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="6" elements="26" coveredelements="9"/>
+        <line num="96" type="stmt" count="0"/>
+        <metrics loc="98" ncloc="64" classes="1" methods="5" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="6" elements="26" coveredelements="9"/>
       </file>
       <file name="/shared/httpd/php/htdocs/pixie/src/QueryBuilder/Raw.php">
         <class name="Pixie\QueryBuilder\Raw" namespace="Pixie\QueryBuilder">
-          <metrics complexity="3" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="0" elements="8" coveredelements="0"/>
+          <metrics complexity="3" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="4" elements="8" coveredelements="6"/>
         </class>
-        <line num="16" type="method" name="__construct" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="18" type="stmt" count="0"/>
-        <line num="19" type="stmt" count="0"/>
-        <line num="20" type="stmt" count="0"/>
+        <line num="16" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="18" type="stmt" count="1"/>
+        <line num="19" type="stmt" count="1"/>
+        <line num="20" type="stmt" count="1"/>
         <line num="22" type="method" name="getBindings" visibility="public" complexity="1" crap="2.00" count="0"/>
         <line num="24" type="stmt" count="0"/>
-        <line num="30" type="method" name="__toString" visibility="public" complexity="1" crap="2.00" count="0"/>
-        <line num="32" type="stmt" count="0"/>
-        <metrics loc="34" ncloc="25" classes="1" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="0" elements="8" coveredelements="0"/>
+        <line num="30" type="method" name="__toString" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="32" type="stmt" count="1"/>
+        <metrics loc="34" ncloc="25" classes="1" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="4" elements="8" coveredelements="6"/>
       </file>
       <file name="/shared/httpd/php/htdocs/pixie/src/QueryBuilder/Transaction.php">
         <class name="Pixie\QueryBuilder\Transaction" namespace="Pixie\QueryBuilder">
@@ -830,6 +840,6 @@
         <metrics loc="7" ncloc="7" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </file>
     </package>
-    <metrics files="20" loc="2353" ncloc="1403" classes="14" methods="121" coveredmethods="19" conditionals="0" coveredconditionals="0" statements="580" coveredstatements="180" elements="701" coveredelements="199"/>
+    <metrics files="20" loc="2378" ncloc="1422" classes="14" methods="122" coveredmethods="34" conditionals="0" coveredconditionals="0" statements="589" coveredstatements="240" elements="711" coveredelements="274"/>
   </project>
 </coverage>

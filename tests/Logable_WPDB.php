@@ -92,6 +92,6 @@ class Logable_WPDB extends \wpdb
             'args' => $args[0],
         );
 
-        return $this->then_return;
+        return sprintf(\str_replace('%s', "'%s'", $query), ...$args[0]);
     }
 }

@@ -1,4 +1,6 @@
-<?php namespace Pixie\QueryBuilder;
+<?php
+
+namespace Pixie\QueryBuilder;
 
 class QueryObject
 {
@@ -9,20 +11,20 @@ class QueryObject
     protected $sql;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     protected $bindings = array();
 
     /**
-     * @var \PDO
+     * @var \wpdb
      */
-    protected $pdo;
+    protected $dbInstance;
 
-    public function __construct($sql, array $bindings,  $pdo)
+    public function __construct($sql, array $bindings, $dbInstance)
     {
         $this->sql = (string)$sql;
         $this->bindings = $bindings;
-        $this->pdo = $pdo;
+        $this->dbInstance = $dbInstance;
     }
 
     /**
@@ -34,7 +36,7 @@ class QueryObject
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getBindings()
     {
@@ -77,11 +79,11 @@ class QueryObject
             }
 
             if (is_string($value)) {
-                $values[$key] = $this->pdo->quote($value);
+                $values[$key] = $value;
             }
 
             if (is_array($value)) {
-                $values[$key] = implode(',', $this->pdo->quote($value));
+                $values[$key] = implode(',', $value);
             }
 
             if (is_null($value)) {
