@@ -38,7 +38,10 @@ $config = [
 // Get the current (gloabl) WPDB instance, or create a custom one 
 global $wpdb;
 
-new \Pixie\Connection($wpdb, $config, 'QB');
+// Give this instance its own custom class alias (for calling statically);
+$alias = 'QB';
+
+new \Pixie\Connection($wpdb, $config, $alias);
 ```
 
 **Simple Query:**
@@ -77,13 +80,13 @@ Pixie uses [Composer](http://getcomposer.org/doc/00-intro.md#installation-nix) t
 
 Learn to use composer and add this to require section (in your composer.json):
 
-    "usmanhalalit/pixie": "2.*@dev"
+    "gin0115/pixie": "1.*@dev"
 
 And run:
 
     composer update
 
-Library on [Packagist](https://packagist.org/packages/usmanhalalit/pixie).
+Library on [Packagist](https://packagist.org/packages/gin0115/pixie).
 
 ## Full Usage API
 
