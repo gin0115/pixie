@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Pixie\Tests\Unit;
 
+use Exception;
 use WP_UnitTestCase;
 use Pixie\Connection;
 use Pixie\Tests\Logable_WPDB;
@@ -34,5 +35,32 @@ class TestConnection extends WP_UnitTestCase
         $wpdb = new Logable_WPDB();
         $connection->setDbInstance($wpdb);
         $this->assertSame($wpdb, $connection->getDbInstance());
+    }
+
+    /** @testdox It should be possible to create a connection and be able to recall the first instance with a static method. */
+    public function testCachesFirstInstance(): void
+    {
+        // Initial Connection
+        $wpdb = new Logable_WPDB();
+        $connection1 = new Connection($wpdb);
+
+        // Second Connection
+        $connection2 = new Connection($this->createMock('wpdb'));
+
+        // Should use the DB istance from the first.
+        $this->assertInstanceOf(Logable_WPDB::class, Connection::getStoredConnection()->getDbInstance());
+    }
+
+    /**
+     * @testdox Attempting to access the stored connection which has not been set, should result in an exception being thrown
+     * @runInSeparateProcess Run in own process due to static property.
+     * @preserveGlobalState disabled
+     */
+    public function testAttemptingToAccessAnUnsetCachedConnectionShouldThrowException(): void
+    {
+        
+        $this->expectExceptionMessage('No initial instance of Connection created');
+        $this->expectException(Exception::class);
+        Connection::getStoredConnection();
     }
 }
