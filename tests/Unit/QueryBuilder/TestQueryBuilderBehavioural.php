@@ -13,6 +13,7 @@ namespace Pixie\Tests\Unit;
 
 use WP_UnitTestCase;
 use Pixie\Connection;
+use Pixie\QueryBuilder\Raw;
 use Pixie\Tests\Logable_WPDB;
 use Pixie\QueryBuilder\JoinBuilder;
 use Pixie\QueryBuilder\QueryBuilderHandler;
@@ -518,5 +519,58 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
                 $builder->orOn('bar.baz', '!=', 'foo.baz');
             });
         $this->assertEquals("SELECT * FROM prefix_foo INNER JOIN prefix_bar ON prefix_bar.id != prefix_foo.id OR prefix_bar.baz != prefix_foo.baz", $builder->getQuery()->getRawSql());
+    }
+
+                                        #################################################
+                                        ##             SUB AND RAW QUERIES             ##
+                                        #################################################
+
+    /** @testdox It should be possible to create a raw query which can be executed with or without binding values. */
+    public function testRawQuery(): void
+    {
+        // Without bindings.
+        $builder = $this->queryBuilderProvider(null, 'testRawQuery');
+        \testRawQuery::query('SELECT * FROM foo')->get();
+
+        $this->assertEquals('SELECT * FROM foo', $this->wpdb->usage_log['get_results'][0]['query']);
+
+        // Reset the log
+        $this->wpdb->usage_log = [];
+
+        // With bindings.
+        \testRawQuery::query('SELECT * FROM foo WHERE bar = %s AND baz != %d', ['string', 314])->get();
+
+        $this->assertEquals('SELECT * FROM foo WHERE bar = \'string\' AND baz != 314', $this->wpdb->usage_log['get_results'][0]['query']);
+        $this->assertEquals('SELECT * FROM foo WHERE bar = %s AND baz != %d', $this->wpdb->usage_log['prepare'][0]['query']);
+        $this->assertCount(2, $this->wpdb->usage_log['prepare'][0]['args']);
+        $this->assertEquals('string', $this->wpdb->usage_log['prepare'][0]['args'][0]);
+        $this->assertEquals(314, $this->wpdb->usage_log['prepare'][0]['args'][1]);
+    }
+
+
+    /** @testdox It should be possible to create a raw SQL expression that can be used as in a sub query */
+    public function testRawExpression(): void
+    {
+        $builder = $this->queryBuilderProvider(null, 'testRawExpression');
+
+        // With no bindings.
+        /** @var Raw */
+        $query = \testRawExpression::raw('SELECT * FROM foo');
+        $this->assertInstanceOf(Raw::class, $query);
+        $this->assertEquals('SELECT * FROM foo', (string) $query);
+        $this->assertIsArray($query->getBindings());
+        $this->assertEmpty($query->getBindings());
+
+        // With single value (not array) binding value.
+        /** @var Raw */
+        $query = \testRawExpression::raw('SELECT * FROM foo WHERE %s = \'single\'', 'single');
+        $this->assertContains('single', $query->getBindings());
+        $this->assertCount(1, $query->getBindings());
+
+        // With multiple binding values.
+        $query = \testRawExpression::raw('SELECT * FROM foo WHERE %s = \'single\'', ['a', 'b']);
+        $this->assertContains('a', $query->getBindings());
+        $this->assertContains('b', $query->getBindings());
+        $this->assertCount(2, $query->getBindings());
     }
 }
