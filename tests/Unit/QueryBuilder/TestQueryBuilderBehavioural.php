@@ -443,7 +443,7 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
                                         #################################################
 
     /** @testdox It should be possible to create a query using (INNER) join for a relationship */
-    public function testInnerJoin(): void
+    public function testJoin(): void
     {
         // Single Condition
         $builder = $this->queryBuilderProvider('prefix_')
@@ -495,6 +495,17 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
             ->crossJoin('bar', 'foo.id', '=', 'bar.id');
 
         $this->assertEquals("SELECT * FROM prefix_foo CROSS JOIN prefix_bar ON prefix_foo.id = prefix_bar.id", $builder->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a query using (INNER) join for a relationship */
+    public function testInnerJoin()
+    {
+        // Single Condition
+        $builder = $this->queryBuilderProvider('in_')
+            ->table('foo')
+            ->innerJoin('bar', 'foo.id', '=', 'bar.id');
+
+        $this->assertEquals("SELECT * FROM in_foo INNER JOIN in_bar ON in_foo.id = in_bar.id", $builder->getQuery()->getRawSql());
     }
 
     /** @testdox It should be possible to create a conditional join using multiple ON with AND conditions */

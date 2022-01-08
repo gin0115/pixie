@@ -27,10 +27,10 @@ class QueryBuilderHandler
     /**
      * @var \wpdb
      */
-    protected $wpdb;
+    protected $dbInstance;
 
     /**
-     * @var null|sqlStatement
+     * @var null|string[]
      */
     protected $sqlStatement = null;
 
@@ -67,7 +67,7 @@ class QueryBuilderHandler
 
         $this->connection = $connection;
         $this->container = $this->connection->getContainer();
-        $this->wpdb = $this->connection->getDbInstance();
+        $this->dbInstance = $this->connection->getDbInstance();
         $this->adapter = 'wpdb';
         $this->adapterConfig = $this->connection->getAdapterConfig();
 
@@ -132,7 +132,7 @@ class QueryBuilderHandler
     public function statement($sql, $bindings = array())
     {
         $start = microtime(true);
-        $sqlStatement = empty($bindings) ? $sql : $this->wpdb->prepare($sql, $bindings);
+        $sqlStatement = empty($bindings) ? $sql : $this->dbInstance->prepare($sql, $bindings);
 
         return array($sqlStatement, microtime(true) - $start);
     }
@@ -161,7 +161,7 @@ class QueryBuilderHandler
         }
 
         $start = microtime(true);
-        $result = call_user_func_array(array($this->wpdb, 'get_results'), [$this->sqlStatement, $this->getFetchMode()]);
+        $result = call_user_func_array(array($this->dbInstance, 'get_results'), [$this->sqlStatement, $this->getFetchMode()]);
         $executionTime += microtime(true) - $start;
         $this->sqlStatement = null;
         $this->fireEvents('after-select', $result, $executionTime);
@@ -277,7 +277,7 @@ class QueryBuilderHandler
 
         return $this->container->build(
             '\\Pixie\\QueryBuilder\\QueryObject',
-            array($queryArr['sql'], $queryArr['bindings'], $this->wpdb)
+            array($queryArr['sql'], $queryArr['bindings'], $this->dbInstance)
         );
     }
 
@@ -315,10 +315,10 @@ class QueryBuilderHandler
             $queryObject = $this->getQuery($type, $data);
 
             list($preparedQuery, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
-            $this->wpdb->get_results($preparedQuery);
+            $this->dbInstance->get_results($preparedQuery);
 
             // Check we have a result.
-            $return = $this->wpdb->rows_affected === 1 ? $this->wpdb->insert_id : null;
+            $return = $this->dbInstance->rows_affected === 1 ? $this->dbInstance->insert_id : null;
         } else {
             // Its a batch insert
             $return = array();
@@ -327,11 +327,11 @@ class QueryBuilderHandler
                 $queryObject = $this->getQuery($type, $subData);
 
                 list($preparedQuery, $time) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
-                $this->wpdb->get_results($preparedQuery);
+                $this->dbInstance->get_results($preparedQuery);
                 $executionTime += $time;
 
-                if ($this->wpdb->rows_affected === 1) {
-                    $return[] = $this->wpdb->insert_id;
+                if ($this->dbInstance->rows_affected === 1) {
+                    $return[] = $this->dbInstance->insert_id;
                 }
             }
         }
@@ -809,7 +809,7 @@ class QueryBuilderHandler
     {
         try {
             // Begin the PDO transaction
-            $this->wpdb->beginTransaction();
+            $this->dbInstance->beginTransaction();
 
             // Get the Transaction class
             $transaction = $this->container->build('\\Pixie\\QueryBuilder\\Transaction', array($this->connection));
@@ -819,7 +819,7 @@ class QueryBuilderHandler
 
             // If no errors have been thrown or the transaction wasn't completed within
             // the closure, commit the changes
-            $this->wpdb->commit();
+            $this->dbInstance->commit();
 
             return $this;
         } catch (TransactionHaltException $e) {
@@ -827,7 +827,7 @@ class QueryBuilderHandler
             return $this;
         } catch (\Exception $e) {
             // something happened, rollback changes
-            $this->wpdb->rollBack();
+            $this->dbInstance->rollBack();
             return $this;
         }
     }
@@ -915,7 +915,7 @@ class QueryBuilderHandler
      */
     public function dbInstance(): \wpdb
     {
-        return $this->wpdb;
+        return $this->dbInstance;
     }
 
     /**
