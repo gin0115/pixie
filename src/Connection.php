@@ -2,6 +2,7 @@
 
 namespace Pixie;
 
+use Exception;
 use Viocon\Container;
 use Pixie\AliasFacade;
 use Pixie\EventHandler;
@@ -22,7 +23,7 @@ class Connection
     protected $adapter;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $adapterConfig;
 
@@ -42,33 +43,39 @@ class Connection
     protected $eventHandler;
 
     /**
-     * @param               $adapter
-     * @param array         $adapterConfig
-     * @param null|string   $alias
-     * @param Container     $container
+     * @param \wpdb                 $wpdb
+     * @param array<string, mixed>  $adapterConfig
+     * @param null|string           $alias
+     * @param null|Container        $container
      */
-    public function __construct(\wpdb $wpdb, array $adapterConfig = [], $alias = null, Container $container = null)
-    {
+    public function __construct(
+        \wpdb $wpdb,
+        array $adapterConfig = [],
+        ?string $alias = null,
+        ?Container $container = null
+    ) {
         $this->dbInstance = $wpdb;
-
         $this->setAdapterConfig($adapterConfig);
 
         $this->container = $container ?? new Container();
-
-        // Create event dependency
         $this->eventHandler = $this->container->build(EventHandler::class);
 
         if ($alias) {
             $this->createAlias($alias);
+        }
+
+        // Preserve the first database connection with a static property
+        if (! static::$storedConnection) {
+            static::$storedConnection = $this;
         }
     }
 
     /**
      * Create an easily accessible query builder alias
      *
-     * @param $alias
+     * @param string $alias
      */
-    public function createAlias($alias)
+    public function createAlias(string $alias): void
     {
         class_alias(AliasFacade::class, $alias);
         $builder = $this->container->build(QueryBuilderHandler::class, array( $this ));
@@ -78,21 +85,9 @@ class Connection
     /**
      * Returns an instance of Query Builder
      */
-    public function getQueryBuilder()
+    public function getQueryBuilder(): QueryBuilderHandler
     {
         return $this->container->build(QueryBuilderHandler::class, array( $this ));
-    }
-
-
-    /**
-     * Create the connection adapter
-     */
-    protected function connect()
-    {
-        // Preserve the first database connection with a static property
-        if (! static::$storedConnection) {
-            static::$storedConnection = $this;
-        }
     }
 
     /**
@@ -115,7 +110,7 @@ class Connection
     }
 
     /**
-     * @param array $adapterConfig
+     * @param array<string, mixed> $adapterConfig
      *
      * @return $this
      */
@@ -126,7 +121,7 @@ class Connection
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getAdapterConfig()
     {
@@ -150,7 +145,10 @@ class Connection
     }
 
     /**
+     * Returns the initial instance created.
+     *
      * @return Connection
+     * @throws Exception If connection not already established
      */
     public static function getStoredConnection()
     {
