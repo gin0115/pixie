@@ -284,7 +284,6 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
         $this->assertEquals("SELECT * FROM foo WHERE key IS NOT NULL OR key2 IS NULL", $builderMixed->getQuery()->getRawSql());
     }
 
-
                                         ################################################
                                         ##   GROUP, ORDER BY, LIMIT/OFFSET & HAVING   ##
                                         ################################################
@@ -395,22 +394,81 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
                                         #################################################
 
     /** @testdox It should be possible to create a query using (INNER) join for a relationship */
-    public function testJoin(): void
+    public function testInnerJoin(): void
     {
         // Single Condition
-        $joinSingle = $this->queryBuilderProvider('prefix_')
+        $builder = $this->queryBuilderProvider('prefix_')
             ->table('foo')
             ->join('bar', 'foo.id', '=', 'bar.id');
 
-        $this->assertEquals("SELECT * FROM prefix_foo INNER JOIN prefix_bar ON prefix_foo.id = prefix_bar.id", $joinSingle->getQuery()->getRawSql());
+        $this->assertEquals("SELECT * FROM prefix_foo INNER JOIN prefix_bar ON prefix_foo.id = prefix_bar.id", $builder->getQuery()->getRawSql());
+    }
 
-        // Multiple conditions
-        $joinMultiple = $this->queryBuilderProvider('prefix_')
+    /** @testdox It should be possible to create a query using (OUTER) join for a relationship */
+    public function testOuterJoin()
+    {
+        // Single Condition
+        $builder = $this->queryBuilderProvider('prefix_')
+            ->table('foo')
+            ->outerJoin('bar', 'foo.id', '=', 'bar.id');
+
+        $this->assertEquals("SELECT * FROM prefix_foo OUTER JOIN prefix_bar ON prefix_foo.id = prefix_bar.id", $builder->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a query using (RIGHT) join for a relationship */
+    public function testRightJoin()
+    {
+        // Single Condition
+        $builder = $this->queryBuilderProvider('prefix_')
+            ->table('foo')
+            ->rightJoin('bar', 'foo.id', '=', 'bar.id');
+
+        $this->assertEquals("SELECT * FROM prefix_foo RIGHT JOIN prefix_bar ON prefix_foo.id = prefix_bar.id", $builder->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a query using (LEFT) join for a relationship */
+    public function testLeftJoin()
+    {
+        // Single Condition
+        $builder = $this->queryBuilderProvider('prefix_')
+            ->table('foo')
+            ->leftJoin('bar', 'foo.id', '=', 'bar.id');
+
+        $this->assertEquals("SELECT * FROM prefix_foo LEFT JOIN prefix_bar ON prefix_foo.id = prefix_bar.id", $builder->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a query using (CROSS) join for a relationship */
+    public function testCrossJoin()
+    {
+        // Single Condition
+        $builder = $this->queryBuilderProvider('prefix_')
+            ->table('foo')
+            ->crossJoin('bar', 'foo.id', '=', 'bar.id');
+
+        $this->assertEquals("SELECT * FROM prefix_foo CROSS JOIN prefix_bar ON prefix_foo.id = prefix_bar.id", $builder->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a conditional join using multiple ON with AND conditions */
+    public function testMultipleJoinAndViaClosure()
+    {
+        $builder = $this->queryBuilderProvider('prefix_')
             ->table('foo')
             ->join('bar', function (JoinBuilder $builder) {
                 $builder->on('bar.id', '!=', 'foo.id');
                 $builder->on('bar.baz', '!=', 'foo.baz');
             });
-        $this->assertEquals("SELECT * FROM prefix_foo INNER JOIN prefix_bar ON prefix_bar.id != prefix_foo.id AND prefix_bar.baz != prefix_foo.baz", $joinMultiple->getQuery()->getRawSql());
+        $this->assertEquals("SELECT * FROM prefix_foo INNER JOIN prefix_bar ON prefix_bar.id != prefix_foo.id AND prefix_bar.baz != prefix_foo.baz", $builder->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a conditional join using multiple ON with OR conditions */
+    public function testMultipleJoinOrViaClosure()
+    {
+        $builder = $this->queryBuilderProvider('prefix_')
+            ->table('foo')
+            ->join('bar', function (JoinBuilder $builder): void {
+                $builder->orOn('bar.id', '!=', 'foo.id');
+                $builder->orOn('bar.baz', '!=', 'foo.baz');
+            });
+        $this->assertEquals("SELECT * FROM prefix_foo INNER JOIN prefix_bar ON prefix_bar.id != prefix_foo.id OR prefix_bar.baz != prefix_foo.baz", $builder->getQuery()->getRawSql());
     }
 }

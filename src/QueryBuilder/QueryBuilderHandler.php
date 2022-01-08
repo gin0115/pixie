@@ -870,6 +870,30 @@ class QueryBuilderHandler
     }
 
     /**
+     * @param string           $table
+     * @param callable|string  $key
+     * @param null|string      $operator
+     * @param null|mixed       $value
+     * @return this
+     */
+    public function crossJoin($table, $key, $operator = null, $value = null)
+    {
+        return $this->join($table, $key, $operator, $value, 'cross');
+    }
+
+    /**
+     * @param string           $table
+     * @param callable|string  $key
+     * @param null|string      $operator
+     * @param null|mixed       $value
+     * @return this
+     */
+    public function outerJoin($table, $key, $operator = null, $value = null)
+    {
+        return $this->join($table, $key, $operator, $value, 'outer');
+    }
+
+    /**
      * Add a raw query
      *
      * @param $value

@@ -332,11 +332,8 @@ Available methods,
  - join() or innerJoin
  - leftJoin()
  - rightJoin()
-
-If you need `FULL OUTER` join or any other join, just pass it as 5th parameter of `join` method.
-```PHP
-->join('another_table', 'another_table.person_id', '=', 'my_table.id', 'FULL OUTER')
-```
+ - outerJoin()
+ - crossJoin()
 
 #### Multiple Join Criteria
 If you need more than one criterion to join a table then pass a closure as second parameter.
@@ -349,6 +346,10 @@ If you need more than one criterion to join a table then pass a closure as secon
         $table->orOn('another_table.age', '>', QB::raw(1));
     })
 ```
+
+> Closures can be used for the key value
+
+// GLYNN
 
 ### Raw Query
 You can always use raw queries if you need,
