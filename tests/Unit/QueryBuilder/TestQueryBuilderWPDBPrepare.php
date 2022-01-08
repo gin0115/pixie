@@ -169,8 +169,4 @@ class TestQueryBuilderUsesWPDBPrepare extends TestCase
         $this->assertEquals(2.5, $prepared['args'][1]);
         $this->assertEquals('banned', $prepared['args'][2]);
     }
-
-
-
-    
 }

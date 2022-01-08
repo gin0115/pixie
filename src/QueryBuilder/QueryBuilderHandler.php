@@ -497,7 +497,7 @@ class QueryBuilderHandler
     }
 
     /**
-     * @param $field
+     * @param string|string[] $field Either the single field or an array of fields.
      *
      * @return $this
      */
@@ -509,8 +509,8 @@ class QueryBuilderHandler
     }
 
     /**
-     * @param        $fields
-     * @param string $defaultDirection
+     * @param string|string[] $fields
+     * @param string          $defaultDirection
      *
      * @return $this
      */
@@ -929,7 +929,7 @@ class QueryBuilderHandler
     /**
      * Add table prefix (if given) on given string.
      *
-     * @param      $values
+     * @param string|string[]     $values
      * @param bool $tableFieldMix If we have mixes of field and table names with a "."
      *
      * @return array|mixed

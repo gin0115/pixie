@@ -14,9 +14,10 @@ namespace Pixie\Tests\Unit;
 use WP_UnitTestCase;
 use Pixie\Connection;
 use Pixie\Tests\Logable_WPDB;
+use Pixie\QueryBuilder\JoinBuilder;
 use Pixie\QueryBuilder\QueryBuilderHandler;
 
-class TestQueryBuilder extends WP_UnitTestCase
+class TestQueryBuilderBehavioural extends WP_UnitTestCase
 {
 
     /** Mocked WPDB instance.
@@ -86,6 +87,16 @@ class TestQueryBuilder extends WP_UnitTestCase
             ->select(['double', 'dual']);
 
         $this->assertEquals('SELECT double, dual FROM foo', $builderMulti->getQuery()->getSql());
+    }
+
+    /** @testdox It should be possible to use aliases with the select fields. */
+    public function testSelectWithAliasForColumns(): void
+    {
+        $builder = $this->queryBuilderProvider()
+            ->table('foo')
+            ->select(['single' => 'sgl', 'foo' => 'bar']);
+
+        $this->assertEquals('SELECT single AS sgl, foo AS bar FROM foo', $builder->getQuery()->getSql());
     }
 
     /** @testdox It should be possible to select distinct values, either individually or multiple columns. */
@@ -275,8 +286,131 @@ class TestQueryBuilder extends WP_UnitTestCase
 
 
                                         ################################################
-                                        ##              GROUP CONDITIONS              ##
+                                        ##   GROUP, ORDER BY, LIMIT/OFFSET & HAVING   ##
                                         ################################################
 
+    /** @testdox It should be possible to create a grouped where condition */
+    public function testGroupedWhere(): void
+    {
+        $builder = $this->queryBuilderProvider()
+            ->table('foo')
+            ->where('key', '=', 'value')
+            ->where(function (QueryBuilderHandler $query) {
+                $query->where('key2', '<>', 'value2');
+                $query->orWhere('key3', '=', 'value3');
+            });
 
+        $this->assertEquals("SELECT * FROM foo WHERE key = 'value' AND (key2 <> 'value2' OR key3 = 'value3')", $builder->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a query which uses group by (SINGLE) */
+    public function testSingleGroupBy(): void
+    {
+        $builder = $this->queryBuilderProvider()
+            ->table('foo')->groupBy('bar');
+
+        $this->assertEquals("SELECT * FROM foo GROUP BY bar", $builder->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to create a query which uses group by (Multiple) */
+    public function testMultipleGroupBy(): void
+    {
+        $builder = $this->queryBuilderProvider()
+            ->table('foo')->groupBy(['bar', 'baz']);
+
+        $this->assertEquals("SELECT * FROM foo GROUP BY bar, baz", $builder->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to order by a single key and specify the direction. */
+    public function testOrderBy(): void
+    {
+        // Assumed ASC (default.)
+        $builderDef = $this->queryBuilderProvider()
+            ->table('foo')->orderBy('bar');
+
+        $this->assertEquals("SELECT * FROM foo ORDER BY bar ASC", $builderDef->getQuery()->getRawSql());
+
+        // Specified DESC
+        $builderDesc = $this->queryBuilderProvider()
+            ->table('foo')->orderBy('bar', 'DESC');
+
+        $this->assertEquals("SELECT * FROM foo ORDER BY bar DESC", $builderDesc->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to order by a single key and specify the direction. */
+    public function testOrderByMultiple(): void
+    {
+        // Assumed ASC (default.)
+        $builderDef = $this->queryBuilderProvider()
+            ->table('foo')->orderBy(['bar', 'baz']);
+
+        $this->assertEquals("SELECT * FROM foo ORDER BY bar ASC, baz ASC", $builderDef->getQuery()->getRawSql());
+
+        // Specified DESC
+        $builderDesc = $this->queryBuilderProvider()
+            ->table('foo')->orderBy(['bar', 'baz'], 'DESC');
+
+        $this->assertEquals("SELECT * FROM foo ORDER BY bar DESC, baz DESC", $builderDesc->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to set HAVING in queries. */
+    public function testHaving(): void
+    {
+        $builderHaving = $this->queryBuilderProvider()
+            ->table('foo')
+            ->select(['real' => 'alias'])
+            ->having('alias', '!=', 'tree');
+
+        $this->assertEquals("SELECT real AS alias FROM foo HAVING alias != 'tree'", $builderHaving->getQuery()->getRawSql());
+
+        $builderMixed = $this->queryBuilderProvider()
+            ->table('foo')
+            ->select(['real' => 'alias'])
+            ->having('alias', '!=', 'tree')
+            ->orHaving('bar', '=', 'woop');
+
+        $this->assertEquals("SELECT real AS alias FROM foo HAVING alias != 'tree' OR bar = 'woop'", $builderMixed->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to limit the query */
+    public function testLimit(): void
+    {
+        $builderLimit = $this->queryBuilderProvider()
+            ->table('foo')->limit(12);
+
+        $this->assertEquals("SELECT * FROM foo LIMIT 12", $builderLimit->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to set the offset that a query will start return results from */
+    public function testOffset()
+    {
+        $builderOffset = $this->queryBuilderProvider()
+            ->table('foo')->offset(12);
+
+        $this->assertEquals("SELECT * FROM foo OFFSET 12", $builderOffset->getQuery()->getRawSql());
+    }
+
+                                        #################################################
+                                        ##    JOIN {INNER, LEFT, RIGHT, FULL OUTER}    ##
+                                        #################################################
+
+    /** @testdox It should be possible to create a query using (INNER) join for a relationship */
+    public function testJoin(): void
+    {
+        // Single Condition
+        $joinSingle = $this->queryBuilderProvider('prefix_')
+            ->table('foo')
+            ->join('bar', 'foo.id', '=', 'bar.id');
+
+        $this->assertEquals("SELECT * FROM prefix_foo INNER JOIN prefix_bar ON prefix_foo.id = prefix_bar.id", $joinSingle->getQuery()->getRawSql());
+
+        // Multiple conditions
+        $joinMultiple = $this->queryBuilderProvider('prefix_')
+            ->table('foo')
+            ->join('bar', function (JoinBuilder $builder) {
+                $builder->on('bar.id', '!=', 'foo.id');
+                $builder->on('bar.baz', '!=', 'foo.baz');
+            });
+        $this->assertEquals("SELECT * FROM prefix_foo INNER JOIN prefix_bar ON prefix_bar.id != prefix_foo.id AND prefix_bar.baz != prefix_foo.baz", $joinMultiple->getQuery()->getRawSql());
+    }
 }
