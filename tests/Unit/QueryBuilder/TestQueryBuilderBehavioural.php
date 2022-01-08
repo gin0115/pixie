@@ -591,6 +591,7 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
                                         ##               INSERT & UPDATE               ##
                                         #################################################
 
+    /** @testdox It should be possible to insert a single row of data and get the row id/key returned. */
     public function testInsertSingle(): void
     {
         // Mock success from single insert
@@ -603,13 +604,34 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
 
         $this->assertEquals(24, $newID);
 
+        // Check the actual query.
         $this->assertEquals("INSERT INTO foo (name,description) VALUES ('Sana','Blah')", $this->wpdb->usage_log['get_results'][0]['query']);
-
-
-
-            // dump($builder);
-
-        dump($this->wpdb->usage_log);
-        // dump($builder->getQuery()->getRawSql());
     }
+
+    /** @testdox It should be possible to insert multiple rows of data and get the row id/key returned. */
+    public function testInsertMultiple(): void
+    {
+        // Mock success from single insert
+        $this->wpdb->rows_affected = 1;
+        $this->wpdb->insert_id = 7;
+
+        $data = [
+            ['name' => 'Sana', 'description' => 'Blah'],
+            ['name' => 'Mark', 'description' => 'Woo'],
+            ['name' => 'Sam', 'description' => 'Boo'],
+        ];
+
+        $newIDs = $this->queryBuilderProvider()
+            ->table('foo')
+            ->insert($data);
+
+        $this->assertEquals([7,7,7], $newIDs); // Will always return 7 as mocked.
+
+        // Check the actual queries.
+        $this->assertEquals("INSERT INTO foo (name,description) VALUES ('Sana','Blah')", $this->wpdb->usage_log['get_results'][0]['query']);
+        $this->assertEquals("INSERT INTO foo (name,description) VALUES ('Mark','Woo')", $this->wpdb->usage_log['get_results'][1]['query']);
+        $this->assertEquals("INSERT INTO foo (name,description) VALUES ('Sam','Boo')", $this->wpdb->usage_log['get_results'][2]['query']);
+    }
+
+
 }

@@ -330,7 +330,7 @@ class QueryBuilderHandler
                 $this->wpdb->get_results($preparedQuery);
                 $executionTime += $time;
 
-                if ($$this->wpdb->rows_affected === 1) {
+                if ($this->wpdb->rows_affected === 1) {
                     $return[] = $this->wpdb->insert_id;
                 }
             }
