@@ -573,4 +573,16 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
         $this->assertContains('b', $query->getBindings());
         $this->assertCount(2, $query->getBindings());
     }
+
+    /** @testdox It should be possible to use RAW Expressions are parts of a query */
+    public function testNestedQueryWithRawExpressions(): void
+    {
+        $this->queryBuilderProvider(null, 'AB');
+        $query = \AB::table('foo') 
+            ->select(\AB::raw('count(cb_my_table.id) as tot'))
+            ->where('value', '=', 'Ifrah')
+            ->where(\AB::raw('bar = %s', 'now'));
+//
+        $this->assertEquals("SELECT count(cb_my_table.id) as tot FROM foo WHERE value = 'Ifrah' AND bar = 'now'", $query->getQuery()->getRawSql());
+    }
 }
