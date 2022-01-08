@@ -145,7 +145,7 @@ abstract class BaseAdapter
             if ($value instanceof Raw) {
                 $values[] = (string) $value;
             } else {
-                $values[] =  '?';
+                $values[] =  $this->inferType($value); 
                 $bindings[] = $value;
             }
         }

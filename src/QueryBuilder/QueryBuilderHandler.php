@@ -131,10 +131,9 @@ class QueryBuilderHandler
      */
     public function statement($sql, $bindings = array())
     {
-        // dd($sql);
         $start = microtime(true);
         $sqlStatement = empty($bindings) ? $sql : $this->wpdb->prepare($sql, $bindings);
-        // dump($sqlStatement);
+
         return array($sqlStatement, microtime(true) - $start);
     }
 
@@ -315,9 +314,11 @@ class QueryBuilderHandler
         if (!is_array(current($data))) {
             $queryObject = $this->getQuery($type, $data);
 
-            list($result, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+            list($preparedQuery, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+            $this->wpdb->get_results($preparedQuery);
 
-            $return = $result->rowCount() === 1 ? $this->wpdb->insert_id : null;
+            // Check we have a result.
+            $return = $this->wpdb->rows_affected === 1 ? $this->wpdb->insert_id : null;
         } else {
             // Its a batch insert
             $return = array();
@@ -325,10 +326,11 @@ class QueryBuilderHandler
             foreach ($data as $subData) {
                 $queryObject = $this->getQuery($type, $subData);
 
-                list($result, $time) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+                list($preparedQuery, $time) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+                $this->wpdb->get_results($preparedQuery);
                 $executionTime += $time;
 
-                if ($result->rowCount() === 1) {
+                if ($$this->wpdb->rows_affected === 1) {
                     $return[] = $this->wpdb->insert_id;
                 }
             }

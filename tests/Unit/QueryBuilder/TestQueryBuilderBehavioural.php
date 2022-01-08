@@ -578,11 +578,38 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
     public function testNestedQueryWithRawExpressions(): void
     {
         $this->queryBuilderProvider(null, 'AB');
-        $query = \AB::table('foo') 
+        $query = \AB::table('foo')
             ->select(\AB::raw('count(cb_my_table.id) as tot'))
             ->where('value', '=', 'Ifrah')
             ->where(\AB::raw('bar = %s', 'now'));
-//
+
         $this->assertEquals("SELECT count(cb_my_table.id) as tot FROM foo WHERE value = 'Ifrah' AND bar = 'now'", $query->getQuery()->getRawSql());
+    }
+
+
+                                        #################################################
+                                        ##               INSERT & UPDATE               ##
+                                        #################################################
+
+    public function testInsertSingle(): void
+    {
+        // Mock success from single insert
+        $this->wpdb->rows_affected = 1;
+        $this->wpdb->insert_id = 24;
+
+        $newID = $this->queryBuilderProvider()
+            ->table('foo')
+            ->insert(['name' => 'Sana', 'description' => 'Blah']);
+
+        $this->assertEquals(24, $newID);
+
+        $this->assertEquals("INSERT INTO foo (name,description) VALUES ('Sana','Blah')", $this->wpdb->usage_log['get_results'][0]['query']);
+
+
+
+            // dump($builder);
+
+        dump($this->wpdb->usage_log);
+        // dump($builder->getQuery()->getRawSql());
     }
 }

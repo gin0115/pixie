@@ -169,4 +169,24 @@ class TestQueryBuilderUsesWPDBPrepare extends TestCase
         $this->assertEquals(2.5, $prepared['args'][1]);
         $this->assertEquals('banned', $prepared['args'][2]);
     }
+
+    /** @testdox It should be possible to insert data and have the values ran through wpdb::prepare() */
+    public function testInsertSingle(): void
+    {
+
+        $data = array(
+            'name' => 'Sana',
+            'something' => false
+        );
+
+        $this->queryBuilderProvider()
+            ->table('foo')
+            ->insert($data);
+
+         // Query and values passed to prepare();
+        $prepared = $this->wpdb->usage_log['prepare'][0];
+
+        // Check that the query is passed to prepare.
+        $this->assertEquals('INSERT INTO foo (name,something) VALUES (%s,%d)', $prepared['query']);
+    }
 }
