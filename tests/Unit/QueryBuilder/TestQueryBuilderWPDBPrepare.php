@@ -189,4 +189,22 @@ class TestQueryBuilderUsesWPDBPrepare extends TestCase
         // Check that the query is passed to prepare.
         $this->assertEquals('INSERT INTO foo (name,something) VALUES (%s,%d)', $prepared['query']);
     }
+
+    /** @testdox It should be possible to create a insert on duplicate key query and have all bound values passed through wpdb::prepare() for both sets of data. */
+    public function testInsertOnDuplicateKey(): void
+    {
+        // Mock success from single insert
+        $this->wpdb->rows_affected = 1;
+        $this->wpdb->insert_id = 18;
+
+        $this->queryBuilderProvider()
+            ->table('foo')
+            ->onDuplicateKeyUpdate(['name' => 'Baza', 'counter' => 1])
+            ->insert(['name' => 'Baza', 'counter' => 2]);
+
+        $this->assertEquals(
+            "INSERT INTO foo (name,counter) VALUES (%s,%d) ON DUPLICATE KEY UPDATE name=%s,counter=%d",
+            $this->wpdb->usage_log['prepare'][0]['query']
+        );
+    }
 }

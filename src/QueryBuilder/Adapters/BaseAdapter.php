@@ -145,7 +145,7 @@ abstract class BaseAdapter
             if ($value instanceof Raw) {
                 $values[] = (string) $value;
             } else {
-                $values[] =  $this->inferType($value); 
+                $values[] =  $this->inferType($value);
                 $bindings[] = $value;
             }
         }
@@ -230,7 +230,7 @@ abstract class BaseAdapter
             if ($value instanceof Raw) {
                 $statement .= $this->wrapSanitizer($key) . '=' . $value . ',';
             } else {
-                $statement .= $this->wrapSanitizer($key) . '=?,';
+                $statement .= $this->wrapSanitizer($key) . sprintf('=%s,', $this->inferType($value));
                 $bindings[] = $value;
             }
         }
