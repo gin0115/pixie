@@ -290,15 +290,15 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
     {
         $builderWhere = $this->queryBuilderProvider()
             ->table('foo')
-            ->orWhereBetween('key', 'v1', 'v2')
-            ->orWhereBetween('key2', 2, 12);
-        $this->assertEquals("SELECT * FROM foo WHERE key BETWEEN 'v1' AND 'v2' OR key2 BETWEEN 2 AND 12", $builderWhere->getQuery()->getRawSql());
+            ->whereBetween('key', 'v1', 'v2')
+            ->whereBetween('key2', 2, 12);
+        $this->assertEquals("SELECT * FROM foo WHERE key BETWEEN 'v1' AND 'v2' AND key2 BETWEEN 2 AND 12", $builderWhere->getQuery()->getRawSql());
 
         $builderNot = $this->queryBuilderProvider()
             ->table('foo')
-            ->orWhereBetween('key', 'v1', 'v2')
-            ->orWhereBetween('key2', 2, 12);
-        $this->assertEquals("SELECT * FROM foo WHERE key BETWEEN 'v1' AND 'v2' OR key2 BETWEEN 2 AND 12", $builderNot->getQuery()->getRawSql());
+            ->orWhereBetween('key2', 2, 12)
+            ->whereBetween('key', 'v1', 'v2');
+        $this->assertEquals("SELECT * FROM foo WHERE key2 BETWEEN 2 AND 12 AND key BETWEEN 'v1' AND 'v2'", $builderNot->getQuery()->getRawSql());
 
         $builderMixed = $this->queryBuilderProvider()
             ->table('foo')
