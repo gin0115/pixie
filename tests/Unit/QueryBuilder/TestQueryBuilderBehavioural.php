@@ -284,6 +284,54 @@ class TestQueryBuilderBehavioural extends WP_UnitTestCase
         $this->assertEquals("SELECT * FROM foo WHERE key IS NOT NULL OR key2 IS NULL", $builderMixed->getQuery()->getRawSql());
     }
 
+    /** @testdox It should be possible to create a querying using BETWEEN (AND/OR) 2 values. */
+    public function testWhereBetween(): void
+    {
+        $builderWhere = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhereBetween('key', 'v1', 'v2')
+            ->orWhereBetween('key2', 2, 12);
+        $this->assertEquals("SELECT * FROM foo WHERE key BETWEEN 'v1' AND 'v2' OR key2 BETWEEN 2 AND 12", $builderWhere->getQuery()->getRawSql());
+
+        $builderNot = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhereBetween('key', 'v1', 'v2')
+            ->orWhereBetween('key2', 2, 12);
+        $this->assertEquals("SELECT * FROM foo WHERE key BETWEEN 'v1' AND 'v2' OR key2 BETWEEN 2 AND 12", $builderNot->getQuery()->getRawSql());
+
+        $builderMixed = $this->queryBuilderProvider()
+            ->table('foo')
+            ->orWhereBetween('key', 'v1', 'v2')
+            ->orWhereBetween('key2', 2, 12);
+        $this->assertEquals("SELECT * FROM foo WHERE key BETWEEN 'v1' AND 'v2' OR key2 BETWEEN 2 AND 12", $builderMixed->getQuery()->getRawSql());
+    }
+
+    /** @testdox It should be possible to use any where() condition and have the operator assumed as = (equals) */
+    public function testWhereAssumedEqualsOperator(): void
+    {
+        $where = $this->queryBuilderProvider()
+            ->table('foo')
+            ->where('key', 'value');
+        $this->assertEquals("SELECT * FROM foo WHERE key = 'value'", $where->getQuery()->getRawSql());
+
+        $orWhere = $this->queryBuilderProvider()
+            ->table('foo')
+            ->where('key', 'value')
+            ->orWhere('key2', 'value2');
+        $this->assertEquals("SELECT * FROM foo WHERE key = 'value' OR key2 = 'value2'", $orWhere->getQuery()->getRawSql());
+
+        $whereNot = $this->queryBuilderProvider()
+            ->table('foo')
+            ->whereNot('key', 'value');
+        $this->assertEquals("SELECT * FROM foo WHERE NOT key = 'value'", $whereNot->getQuery()->getRawSql());
+
+        $orWhereNot = $this->queryBuilderProvider()
+            ->table('foo')
+            ->where('key', 'value')
+            ->orWhereNot('key2', 'value2');
+        $this->assertEquals("SELECT * FROM foo WHERE key = 'value' OR NOT key2 = 'value2'", $orWhereNot->getQuery()->getRawSql());
+    }
+
                                         ################################################
                                         ##   GROUP, ORDER BY, LIMIT/OFFSET & HAVING   ##
                                         ################################################

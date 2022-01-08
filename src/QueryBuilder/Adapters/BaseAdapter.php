@@ -396,13 +396,17 @@ abstract class BaseAdapter
                 switch ($statement['operator']) {
                     case 'BETWEEN':
                         $bindings = array_merge($bindings, $statement['value']);
-                        $criteria .= ' ? AND ? ';
+                        $criteria .= sprintf(
+                            ' %s AND %s ',
+                            $this->inferType($statement['value'][0]),
+                            $this->inferType($statement['value'][1])
+                        );
                         break;
                     default:
                         $valuePlaceholder = '';
                         foreach ($statement['value'] as $subValue) {
                             // Add in format placeholders.
-                            $valuePlaceholder .= sprintf('%s, ', $this->assertType($subValue)); // glynn
+                            $valuePlaceholder .= sprintf('%s, ', $this->inferType($subValue)); // glynn
                             $bindings[] = $subValue;
                         }
 
@@ -426,7 +430,7 @@ abstract class BaseAdapter
                     $bindings = array_merge($bindings, $statement['key']->getBindings());
                 } else {
                     // For wheres
-                    $valuePlaceholder = $this->assertType($value);
+                    $valuePlaceholder = $this->inferType($value);
                     $bindings[] = $value;
                     $criteria .= $statement['joiner'] . ' ' . $key . ' ' . $statement['operator'] . ' '
                         . $valuePlaceholder . ' ';
@@ -446,7 +450,7 @@ abstract class BaseAdapter
      * @param mixed $value
      * @return string
      */
-    public function assertType($value): string
+    public function inferType($value): string
     {
         switch (true) {
             case is_string($value):
