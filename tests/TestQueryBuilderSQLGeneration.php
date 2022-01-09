@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Unit tests for QueryBuilder
+ * Tests to ensure the Query Builder creates valid SQL queries.
  *
  * @since 0.1.0
  * @author GLynn Quelch <glynn.quelch@gmail.com>
@@ -18,7 +18,7 @@ use Pixie\Tests\Logable_WPDB;
 use Pixie\QueryBuilder\JoinBuilder;
 use Pixie\QueryBuilder\QueryBuilderHandler;
 
-class TestQueryBuilderBehavioural extends WP_UnitTestCase
+class TestQueryBuilderSQLGeneration extends WP_UnitTestCase
 {
 
     /** Mocked WPDB instance.

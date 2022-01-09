@@ -53,16 +53,14 @@ class QueryBuilderHandler
 
     /**
      * @param null|\Pixie\Connection $connection
-     *
      * @param string $fetchMode
-     * @throws Exception
+     * @throws Exception If no connection passed and not previously established.
      */
     public function __construct(Connection $connection = null, string $fetchMode = \OBJECT)
     {
-        if (is_null($connection)) {
-            if (!$connection = Connection::getStoredConnection()) {
-                throw new Exception('No database connection found.', 1);
-            }
+        if (is_null($connection) /* && ! is_a(, Connection::class) */) {
+            // throws if connection not already established.
+            $connection = Connection::getStoredConnection();
         }
 
         $this->connection = $connection;
