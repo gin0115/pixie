@@ -15,6 +15,7 @@ use Exception;
 use WP_UnitTestCase;
 use Pixie\Connection;
 use Pixie\Tests\Logable_WPDB;
+use Pixie\QueryBuilder\QueryBuilderHandler;
 
 class TestConnection extends WP_UnitTestCase
 {
@@ -58,9 +59,21 @@ class TestConnection extends WP_UnitTestCase
      */
     public function testAttemptingToAccessAnUnsetCachedConnectionShouldThrowException(): void
     {
-        
         $this->expectExceptionMessage('No initial instance of Connection created');
         $this->expectException(Exception::class);
         Connection::getStoredConnection();
+    }
+
+    /** @testdox It should be possible to create a new query builder instance from a connection */
+    public function testGetQueryBuilder(): void
+    {
+        // Initial Connection
+        $wpdb = new Logable_WPDB();
+        $connection = new Connection($wpdb);
+
+        $builder = $connection->getQueryBuilder();
+
+        $this->assertInstanceOf(QueryBuilderHandler::class, $builder);
+        $this->assertSame($builder->getConnection(), $connection);
     }
 }
