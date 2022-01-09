@@ -2,8 +2,7 @@
 <phpunit bootstrap="tests/bootstrap.php" backupGlobals="false" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true">
     <testsuites>
         <testsuite name="perique_migtations">
-            <directory prefix="Test" suffix=".php">./tests/Unit</directory>
-            <directory prefix="Test" suffix=".php">./tests/Integration</directory>
+            <directory prefix="Test" suffix=".php">./tests</directory>
         </testsuite>
     </testsuites>
 

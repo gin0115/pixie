@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @author GLynn Quelch <glynn.quelch@gmail.com>
  */
 
-namespace Pixie\Tests\Unit;
+namespace Pixie\Tests;
 
 use WP_UnitTestCase;
 use Pixie\Connection;
