@@ -67,6 +67,7 @@ class QueryObject
      */
     protected function interpolateQuery($query, $params)
     {
-        return $this->dbInstance->prepare($query, $params);
+        // Only call this when we have valid params (avoids wpdb::prepare() incorrectly called error)
+        return empty($params) ? $query : $this->dbInstance->prepare($query, $params);
     }
 }

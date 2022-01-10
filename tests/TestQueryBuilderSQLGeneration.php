@@ -45,6 +45,17 @@ class TestQueryBuilderSQLGeneration extends WP_UnitTestCase
         return new QueryBuilderHandler($connection);
     }
 
+    /** @testdox It should be possible to define the table to use in a select query, with more mysql feeling syntax $db->select('*')->from('table') */
+    public function testDefineFromTableNames(): void
+    {
+        $builder = $this->queryBuilderProvider()
+            ->select(['foo.id', 'bar.id'])
+            ->from('foo')
+            ->from('bar');
+
+        $this->assertEquals('SELECT foo.id, bar.id FROM foo, bar', $builder->getQuery()->getSql());
+    }
+
     /** @testdox It should be possible to create a query for multiple tables. */
     public function testMultiTableQuery(): void
     {
@@ -145,7 +156,7 @@ class TestQueryBuilderSQLGeneration extends WP_UnitTestCase
         $builder->table('foo')->select('*')->where('key', '=', 'value')->count();
 
         $log = $this->wpdb->usage_log['get_results'][0];
-        $this->assertEquals("SELECT count(*) as field FROM foo WHERE key = 'value'", $log['query']);
+        $this->assertEquals("SELECT COUNT(*) AS field FROM (SELECT * FROM foo WHERE key = 'value') as count LIMIT 1", $log['query']);
     }
 
                                         ################################################
@@ -683,5 +694,33 @@ class TestQueryBuilderSQLGeneration extends WP_UnitTestCase
 
         $this->assertEquals(12, $ID);
         $this->assertEquals("INSERT INTO foo (name,counter) VALUES ('Baza',2) ON DUPLICATE KEY UPDATE name='Baza',counter=1", $this->wpdb->usage_log['get_results'][0]['query']);
+    }
+
+    /** @testdox It should be possible to create a REPLACE INTO query and have the values added using WPDB::prepare()*/
+    public function testReplace()
+    {
+        $this->queryBuilderProvider()
+            ->table('foo')
+            ->replace(['id' => 24, 'name' => 'Glynn', 'doubt' => true]);
+
+        $prepared = $this->wpdb->usage_log['prepare'][0];
+        $query = $this->wpdb->usage_log['get_results'][0];
+        $this->assertEquals('REPLACE INTO foo (id,name,doubt) VALUES (%d,%s,%d)', $prepared['query']);
+        $this->assertEquals('REPLACE INTO foo (id,name,doubt) VALUES (24,\'Glynn\',1)', $query['query']);
+    }
+
+    /** @testdox It should be possible to create a query which will delete all rows that the match the criteria defined. Any values should be passed to WPDB::prepare() before being used. */
+    public function testDelete()
+    {
+        $this->queryBuilderProvider()
+            ->table('foo')
+            ->where('id', '>', 5)
+            ->delete();
+
+        $prepared = $this->wpdb->usage_log['prepare'][0];
+        $query = $this->wpdb->usage_log['get_results'][0];
+
+        $this->assertEquals('DELETE FROM foo WHERE id > %d', $prepared['query']);
+        $this->assertEquals('DELETE FROM foo WHERE id > 5', $query['query']);
     }
 }

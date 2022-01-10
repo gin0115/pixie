@@ -347,7 +347,7 @@ If you need more than one criterion to join a table then pass a closure as secon
     })
 ```
 
-> Closures can be used for the key value
+> Closures can be used as for the $key
 
 // GLYNN
 

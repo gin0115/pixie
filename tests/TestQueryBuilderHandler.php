@@ -68,4 +68,21 @@ class TestQueryBuilderHandler extends WP_UnitTestCase
         $this->assertSame($connection, $builder->getConnection());
         $this->assertNotSame($connection, $initialConnection);
     }
+
+    /** @testdox It should be possible to create a new query builder instance, using either the current connection or a custom one. */
+    public function testCreateNewQuery(): void
+    {
+        $builder = $this->queryBuilderProvider('prefix_');
+
+        // Using the same connection.
+        $copyBuilder = $builder->newQuery();
+        $this->assertSame($builder->getConnection(), $copyBuilder->getConnection());
+
+        // Using custom connection.
+        $connection = new Connection($this->createMock(\wpdb::class), []);
+        $customBuilder = $builder->newQuery($connection);
+        $this->assertSame($connection, $customBuilder->getConnection());
+    }
+
+
 }

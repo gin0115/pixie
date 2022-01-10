@@ -5,6 +5,7 @@ namespace Pixie\QueryBuilder\Adapters;
 use Pixie\Exception;
 use Pixie\Connection;
 use Pixie\QueryBuilder\Raw;
+use Pixie\QueryBuilder\NestedCriteria;
 
 abstract class BaseAdapter
 {
@@ -34,8 +35,8 @@ abstract class BaseAdapter
      */
     public function select($statements)
     {
-        // dump($statements);
         if (!array_key_exists('tables', $statements)) {
+            dump($statements);
             throw new Exception('No table specified.', 3);
         } elseif (!array_key_exists('selects', $statements)) {
             $statements['selects'][] = '*';
@@ -375,10 +376,7 @@ abstract class BaseAdapter
 
                 // Build a new NestedCriteria class, keep it by reference so any changes made
                 // in the closure should reflect here
-                $nestedCriteria = $this->container->build(
-                    '\\Pixie\\QueryBuilder\\NestedCriteria',
-                    array($this->connection)
-                );
+                $nestedCriteria = $this->container->build(NestedCriteria::class, array($this->connection));
 
                 $nestedCriteria = & $nestedCriteria;
                 // Call the closure with our new nestedCriteria object

@@ -5,6 +5,11 @@ namespace Pixie\QueryBuilder;
 use PDO;
 use Pixie\Exception;
 use Pixie\Connection;
+use Pixie\QueryBuilder\Raw;
+use Pixie\QueryBuilder\JoinBuilder;
+use Pixie\QueryBuilder\QueryObject;
+use Pixie\QueryBuilder\Transaction;
+use Pixie\QueryBuilder\Adapters\wpdb as WpdbAdaptor;
 
 class QueryBuilderHandler
 {
@@ -49,7 +54,7 @@ class QueryBuilderHandler
      *
      * @var array
      */
-    protected $fetchParameters;
+    protected $fetchMode;
 
     /**
      * @param null|\Pixie\Connection $connection
@@ -77,7 +82,7 @@ class QueryBuilderHandler
 
         // Query builder adapter instance
         $this->adapterInstance = $this->container->build(
-            '\\Pixie\\QueryBuilder\\Adapters\\wpdb',
+            WpdbAdaptor::class,
             array($this->connection)
         );
     }
@@ -90,12 +95,12 @@ class QueryBuilderHandler
      */
     public function setFetchMode(string $mode): self
     {
-        $this->fetchParameters = $mode;
+        $this->fetchMode = $mode;
         return $this;
     }
 
     /**
-     * @param null|\Pixie\Connection $connection
+     * @param null|Connection $connection
      * @return QueryBuilderHandler
      * @throws Exception
      */
@@ -143,7 +148,6 @@ class QueryBuilderHandler
      */
     public function get()
     {
-        // dump($this,$this->sqlStatement);
         $eventResult = $this->fireEvents('before-select');
         if (!is_null($eventResult)) {
             return $eventResult;
@@ -159,7 +163,7 @@ class QueryBuilderHandler
         }
 
         $start = microtime(true);
-        $result = call_user_func_array(array($this->dbInstance, 'get_results'), [$this->sqlStatement, $this->getFetchMode()]);
+        $result = $this->dbInstance()->get_results($this->sqlStatement, $this->getFetchMode());
         $executionTime += microtime(true) - $start;
         $this->sqlStatement = null;
         $this->fireEvents('after-select', $result, $executionTime);
@@ -203,59 +207,98 @@ class QueryBuilderHandler
     }
 
     /**
-     * Get count of rows
+     * Used to handle all aggregation method.
      *
-     * @return int
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
+     *
+     * @param string $type
+     * @param string $field
+     * @return float
      */
-    public function count()
+    protected function aggregate(string $type, string $field = '*'): float
     {
-        // Get the current statements
-        $originalStatements = $this->statements;
+        // Verify that field exists
+        if ($field !== '*' && isset($this->statements['selects']) === true && \in_array($field, $this->statements['selects'], true) === false) {
+            throw new \Exception(sprintf('Failed to count query - the column %s hasn\'t been selected in the query.', $field));
+        }
 
-        unset($this->statements['orderBys']);
-        unset($this->statements['limit']);
-        unset($this->statements['offset']);
+        if (isset($this->statements['tables']) === false) {
+            throw new Exception('No table selected');
+        }
 
-        $count = $this->aggregate('count');
-        $this->statements = $originalStatements;
+        $count = $this
+            ->table($this->subQuery($this, 'count'))
+            ->select([$this->raw(sprintf('%s(%s) AS field', strtoupper($type), $field))])
+            ->first();
 
-        return $count;
+        return isset($count->field) === true ? (float)$count->field : 0;
     }
 
     /**
-     * @param $type
+     * Get count of all the rows for the current query
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
      *
-     * @return int
+     * @param string $field
+     *
+     * @return integer
+     * @throws Exception
      */
-    protected function aggregate($type)
+    public function count(string $field = '*'): int
     {
-        // Get the current selects
-        $mainSelects = isset($this->statements['selects']) ? $this->statements['selects'] : null;
-        // Replace select with a scalar value like `count`
-        $this->statements['selects'] = array($this->raw($type . '(*) as field'));
-        $row = $this->get();
-        // dump([$this, $row]);
-
-        // Set the select as it was
-        if ($mainSelects) {
-            $this->statements['selects'] = $mainSelects;
-        } else {
-            unset($this->statements['selects']);
-        }
-
-        if (false === is_array($row)) {
-            return 0;
-        }
-
-        if (is_array($row[0])) {
-            return (int)$row[0]['field'];
-        } elseif (is_object($row[0])) {
-            return (int)$row[0]->field;
-        }
-
-        return 0;
+        return (int)$this->aggregate('count', $field);
     }
 
+    /**
+     * Get the sum for a field in the current query
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
+     *
+     * @param string $field
+     * @return float
+     * @throws Exception
+     */
+    public function sum(string $field): float
+    {
+        return $this->aggregate('sum', $field);
+    }
+
+    /**
+     * Get the average for a field in the current query
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
+     *
+     * @param string $field
+     * @return float
+     * @throws Exception
+     */
+    public function average(string $field): float
+    {
+        return $this->aggregate('avg', $field);
+    }
+
+    /**
+     * Get the minimum for a field in the current query
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
+     *
+     * @param string $field
+     * @return float
+     * @throws Exception
+     */
+    public function min(string $field): float
+    {
+        return $this->aggregate('min', $field);
+    }
+
+    /**
+     * Get the maximum for a field in the current query
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
+     *
+     * @param string $field
+     * @return float
+     * @throws Exception
+     */
+    public function max(string $field): float
+    {
+        return $this->aggregate('max', $field);
+    }
 
     /**
      * @param string $type
@@ -274,7 +317,7 @@ class QueryBuilderHandler
         $queryArr = $this->adapterInstance->$type($this->statements, $dataToBePassed);
 
         return $this->container->build(
-            '\\Pixie\\QueryBuilder\\QueryObject',
+            QueryObject::class,
             array($queryArr['sql'], $queryArr['bindings'], $this->dbInstance)
         );
     }
@@ -372,7 +415,7 @@ class QueryBuilderHandler
     /**
      * @param $data
      *
-     * @return $this
+     * @return bool
      */
     public function update($data)
     {
@@ -382,11 +425,14 @@ class QueryBuilderHandler
         }
 
         $queryObject = $this->getQuery('update', $data);
+        list($preparedQuery, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
 
-        list($response, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+        $this->dbInstance()->get_results($preparedQuery);
         $this->fireEvents('after-update', $queryObject, $executionTime);
 
-        return $response;
+        return $this->dbInstance()->rows_affected !== 0
+            ? $this->dbInstance()->rows_affected
+            : null;
     }
 
     /**
@@ -426,7 +472,8 @@ class QueryBuilderHandler
 
         $queryObject = $this->getQuery('delete');
 
-        list($response, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+        list($preparedQuery, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+        $response = $this->dbInstance()->get_results($preparedQuery);
         $this->fireEvents('after-delete', $queryObject, $executionTime);
 
         return $response;
@@ -785,7 +832,7 @@ class QueryBuilderHandler
 
         // Build a new JoinBuilder class, keep it by reference so any changes made
         // in the closure should reflect here
-        $joinBuilder = $this->container->build('\\Pixie\\QueryBuilder\\JoinBuilder', array($this->connection));
+        $joinBuilder = $this->container->build(JoinBuilder::class, array($this->connection));
         $joinBuilder = &$joinBuilder;
         // Call the closure with our new joinBuilder object
         $key($joinBuilder);
@@ -810,7 +857,7 @@ class QueryBuilderHandler
             $this->dbInstance->beginTransaction();
 
             // Get the Transaction class
-            $transaction = $this->container->build('\\Pixie\\QueryBuilder\\Transaction', array($this->connection));
+            $transaction = $this->container->build(Transaction::class, array($this->connection));
 
             // Call closure
             $callback($transaction);
@@ -903,7 +950,7 @@ class QueryBuilderHandler
      */
     public function raw($value, $bindings = array())
     {
-        return $this->container->build('\\Pixie\\QueryBuilder\\Raw', array($value, $bindings));
+        return $this->container->build(Raw::class, array($value, $bindings));
     }
 
     /**
@@ -1086,8 +1133,8 @@ class QueryBuilderHandler
      */
     public function getFetchMode()
     {
-        return null !== $this->fetchParameters
-            ? $this->fetchParameters
+        return null !== $this->fetchMode
+            ? $this->fetchMode
             : \OBJECT;
     }
 
