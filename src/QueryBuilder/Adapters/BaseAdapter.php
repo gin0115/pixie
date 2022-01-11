@@ -1,8 +1,11 @@
-<?php namespace Pixie\QueryBuilder\Adapters;
+<?php
 
-use Pixie\Connection;
+namespace Pixie\QueryBuilder\Adapters;
+
 use Pixie\Exception;
+use Pixie\Connection;
 use Pixie\QueryBuilder\Raw;
+use Pixie\QueryBuilder\NestedCriteria;
 
 abstract class BaseAdapter
 {
@@ -33,6 +36,7 @@ abstract class BaseAdapter
     public function select($statements)
     {
         if (!array_key_exists('tables', $statements)) {
+            dump($statements);
             throw new Exception('No table specified.', 3);
         } elseif (!array_key_exists('selects', $statements)) {
             $statements['selects'][] = '*';
@@ -142,7 +146,7 @@ abstract class BaseAdapter
             if ($value instanceof Raw) {
                 $values[] = (string) $value;
             } else {
-                $values[] =  '?';
+                $values[] =  $this->inferType($value);
                 $bindings[] = $value;
             }
         }
@@ -227,7 +231,7 @@ abstract class BaseAdapter
             if ($value instanceof Raw) {
                 $statement .= $this->wrapSanitizer($key) . '=' . $value . ',';
             } else {
-                $statement .= $this->wrapSanitizer($key) . '=?,';
+                $statement .= $this->wrapSanitizer($key) . sprintf('=%s,', $this->inferType($value));
                 $bindings[] = $value;
             }
         }
@@ -372,10 +376,7 @@ abstract class BaseAdapter
 
                 // Build a new NestedCriteria class, keep it by reference so any changes made
                 // in the closure should reflect here
-                $nestedCriteria = $this->container->build(
-                    '\\Pixie\\QueryBuilder\\NestedCriteria',
-                    array($this->connection)
-                );
+                $nestedCriteria = $this->container->build(NestedCriteria::class, array($this->connection));
 
                 $nestedCriteria = & $nestedCriteria;
                 // Call the closure with our new nestedCriteria object
@@ -393,12 +394,17 @@ abstract class BaseAdapter
                 switch ($statement['operator']) {
                     case 'BETWEEN':
                         $bindings = array_merge($bindings, $statement['value']);
-                        $criteria .= ' ? AND ? ';
+                        $criteria .= sprintf(
+                            ' %s AND %s ',
+                            $this->inferType($statement['value'][0]),
+                            $this->inferType($statement['value'][1])
+                        );
                         break;
                     default:
                         $valuePlaceholder = '';
                         foreach ($statement['value'] as $subValue) {
-                            $valuePlaceholder .= '?, ';
+                            // Add in format placeholders.
+                            $valuePlaceholder .= sprintf('%s, ', $this->inferType($subValue)); // glynn
                             $bindings[] = $subValue;
                         }
 
@@ -422,8 +428,7 @@ abstract class BaseAdapter
                     $bindings = array_merge($bindings, $statement['key']->getBindings());
                 } else {
                     // For wheres
-
-                    $valuePlaceholder = '?';
+                    $valuePlaceholder = $this->inferType($value);
                     $bindings[] = $value;
                     $criteria .= $statement['joiner'] . ' ' . $key . ' ' . $statement['operator'] . ' '
                         . $valuePlaceholder . ' ';
@@ -435,6 +440,27 @@ abstract class BaseAdapter
         $criteria = preg_replace('/^(\s?AND ?|\s?OR ?)|\s$/i', '', $criteria);
 
         return array($criteria, $bindings);
+    }
+
+    /**
+     * Asserts the types place holder based on its value
+     *
+     * @param mixed $value
+     * @return string
+     */
+    public function inferType($value): string
+    {
+        switch (true) {
+            case is_string($value):
+                return '%s';
+            case \is_int($value):
+            case \is_bool($value):
+                return '%d';
+            case \is_float($value):
+                return '%f';
+            default:
+                return '';
+        }
     }
 
     /**

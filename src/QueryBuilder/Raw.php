@@ -1,4 +1,6 @@
-<?php namespace Pixie\QueryBuilder;
+<?php
+
+namespace Pixie\QueryBuilder;
 
 class Raw
 {
@@ -9,17 +11,26 @@ class Raw
     protected $value;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     protected $bindings;
 
+    /**
+     * @param string|\Stringable|int|float|bool $value
+     * @param mixed|mixed[] $bindings
+     */
     public function __construct($value, $bindings = array())
     {
         $this->value = (string)$value;
         $this->bindings = (array)$bindings;
     }
 
-    public function getBindings()
+    /**
+     * Returns the current bindings
+     *
+     * @return mixed[]
+     */
+    public function getBindings(): array
     {
         return $this->bindings;
     }

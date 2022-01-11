@@ -6,3 +6,7 @@ composer.lock
 test.php
 *~
 .vscode
+_tests
+wordpress
+clover.xml
+coverage-report

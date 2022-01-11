@@ -1,3 +1,8 @@
+# Modified version of Pixie for use with WordPress and WPDB over PDO.
+
+## WIP!
+
+
 **This project is Not Actively Maintained but most of the features are fully working and there are no major security issues, I'm just not giving it much time.**
 
 
@@ -27,21 +32,16 @@ require 'vendor/autoload.php';
 
 // Create a connection, once only.
 $config = [
-            'driver'    => 'mysql', // Db driver
-            'host'      => 'localhost',
-            'database'  => 'your-database',
-            'username'  => 'root',
-            'password'  => 'your-password',
-            'charset'   => 'utf8', // Optional
-            'collation' => 'utf8_unicode_ci', // Optional
-            'prefix'    => 'cb_', // Table prefix, optional
-            'options'   => [ // PDO constructor options, optional
-                PDO::ATTR_TIMEOUT => 5,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ],
-        ];
+    'prefix'    => 'cb_', // Table prefix, optional
+];
 
-new \Pixie\Connection('mysql', $config, 'QB');
+// Get the current (gloabl) WPDB instance, or create a custom one 
+global $wpdb;
+
+// Give this instance its own custom class alias (for calling statically);
+$alias = 'QB';
+
+new \Pixie\Connection($wpdb, $config, $alias);
 ```
 
 **Simple Query:**
@@ -80,13 +80,13 @@ Pixie uses [Composer](http://getcomposer.org/doc/00-intro.md#installation-nix) t
 
 Learn to use composer and add this to require section (in your composer.json):
 
-    "usmanhalalit/pixie": "2.*@dev"
+    "gin0115/pixie": "1.*@dev"
 
 And run:
 
     composer update
 
-Library on [Packagist](https://packagist.org/packages/usmanhalalit/pixie).
+Library on [Packagist](https://packagist.org/packages/gin0115/pixie).
 
 ## Full Usage API
 
@@ -124,7 +124,7 @@ Library on [Packagist](https://packagist.org/packages/usmanhalalit/pixie).
  - [Transactions](#transactions)
  - [Get Built Query](#get-built-query)
  - [Sub Queries and Nested Queries](#sub-queries-and-nested-queries)
- - [Get PDO Instance](#get-pdo-instance)
+ - [Get WPDB Instance](#get-wpdb-instance)
  - [Fetch results as objects of specified class](#fetch-results-as-objects-of-specified-class)
  - [Query Events](#query-events)
     - [Available Events](#available-events)
@@ -141,18 +141,9 @@ Pixie supports three database drivers, MySQL, SQLite and PostgreSQL. You can spe
 // Make sure you have Composer's autoload file included
 require 'vendor/autoload.php';
 
-$config = array(
-            'driver'    => 'mysql', // Db driver
-            'host'      => 'localhost',
-            'database'  => 'your-database',
-            'username'  => 'root',
-            'password'  => 'your-password',
-            'charset'   => 'utf8', // Optional
-            'collation' => 'utf8_unicode_ci', // Optional
-            'prefix'    => 'cb_', // Table prefix, optional
-        );
+$config = array( 'prefix'    => 'cb_'); // Table prefix, optional
 
-new \Pixie\Connection('mysql', $config, 'QB');
+new \Pixie\Connection($wpdb, $config, 'QB');
 
 // Run query
 $query = QB::table('my_table')->where('name', '=', 'Sana');
@@ -161,7 +152,7 @@ $query = QB::table('my_table')->where('name', '=', 'Sana');
 ### Alias
 When you create a connection:
 ```PHP
-new \Pixie\Connection('mysql', $config, 'MyAlias');
+new \Pixie\Connection($wpdb, $config, 'MyAlias');
 ```
 `MyAlias` is the name for the class alias you want to use (like `MyAlias::table(...)`), you can use whatever name (with Namespace also, `MyNamespace\\MyClass`) you like or you may skip it if you don't need an alias. Alias gives you the ability to easily access the QueryBuilder class across your application.
 
@@ -177,28 +168,6 @@ var_dump($query->get());
 ```
 
 `$connection` here is optional, if not given it will always associate itself to the first connection, but it can be useful when you have multiple database connections.
-
-### SQLite and PostgreSQL Config Sample
-```PHP
-new \Pixie\Connection('sqlite', array(
-                'driver'   => 'sqlite',
-			    'database' => 'your-file.sqlite',
-			    'prefix'   => 'cb_',
-		    ), 'QB');
-```
-
-```PHP
-new \Pixie\Connection('pgsql', array(
-                    'driver'   => 'pgsql',
-                    'host'     => 'localhost',
-                    'database' => 'your-database',
-                    'username' => 'postgres',
-                    'password' => 'your-password',
-                    'charset'  => 'utf8',
-                    'prefix'   => 'cb_',
-                    'schema'   => 'public',
-                ), 'QB');
-```
 
 ## Query
 You **must** use `table()` method before every query, except raw `query()`.
@@ -363,11 +332,8 @@ Available methods,
  - join() or innerJoin
  - leftJoin()
  - rightJoin()
-
-If you need `FULL OUTER` join or any other join, just pass it as 5th parameter of `join` method.
-```PHP
-->join('another_table', 'another_table.person_id', '=', 'my_table.id', 'FULL OUTER')
-```
+ - outerJoin()
+ - crossJoin()
 
 #### Multiple Join Criteria
 If you need more than one criterion to join a table then pass a closure as second parameter.
@@ -380,6 +346,10 @@ If you need more than one criterion to join a table then pass a closure as secon
         $table->orOn('another_table.age', '>', QB::raw(1));
     })
 ```
+
+> Closures can be used as for the $key
+
+// GLYNN
 
 ### Raw Query
 You can always use raw queries if you need,
@@ -550,11 +520,11 @@ This will produce a query like this:
 
 **NOTE:** Pixie doesn't use bindings for sub queries and nested queries. It quotes values with PDO's `quote()` method.
 
-### Get PDO Instance
-If you need to get the PDO instance you can do so.
+### Get wpdb Instance
+If you need to get the wpdb instance you can do so.
 
 ```PHP
-QB::pdo();
+QB::dbInstance();
 ```
 
 ### Fetch results as objects of specified class
