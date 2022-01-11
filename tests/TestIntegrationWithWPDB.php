@@ -368,4 +368,40 @@ class TestIntegrationWithWPDB extends WP_UnitTestCase
         $this->assertEquals(1, $updated);
         $this->assertEquals('second', $builder->table('mock_foo')->find(24, 'number')->string);
     }
+
+    /** @testdox [WPDB] It should be possible to create a query which deletes all rows based on the criteria */
+    public function testDeleteWhere(): void
+    {
+        $this->wpdb->insert('mock_foo', ['string' => 'First', 'number' => 1], ['%s', '%d']);
+        $this->wpdb->insert('mock_foo', ['string' => 'Second', 'number' => 2], ['%s', '%d']);
+        $this->wpdb->insert('mock_foo', ['string' => 'Third', 'number' => 3], ['%s', '%d']);
+
+        $builder = $this->queryBuilderProvider();
+
+        // Remove all with a NUMBER of 2 or more.
+        $builder->table('mock_foo')->where('number', '>=', 2)->delete();
+
+        // Check we only have the first value.
+        $rows = $builder->table('mock_foo')->get();
+        $this->assertCount(1, $rows);
+        $this->assertEquals('First', $rows[0]->string);
+    }
+
+    /** @testdox [WPDB] It should be possible to remove all rows from a table */
+    public function testDeleteAll(): void
+    {
+        $this->wpdb->insert('mock_foo', ['string' => 'First', 'number' => 1], ['%s', '%d']);
+        $this->wpdb->insert('mock_foo', ['string' => 'Second', 'number' => 2], ['%s', '%d']);
+        $this->wpdb->insert('mock_foo', ['string' => 'Third', 'number' => 3], ['%s', '%d']);
+
+        $builder = $this->queryBuilderProvider();
+
+        // Remove all with a NUMBER of 2 or more.
+        $builder->table('mock_foo')->delete();
+
+        // Check we only have the first value.
+        $rows = $builder->table('mock_foo')->get();
+
+        $this->assertEmpty($rows);
+    }
 }
