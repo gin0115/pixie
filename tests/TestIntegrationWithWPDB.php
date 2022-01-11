@@ -67,6 +67,23 @@ class TestIntegrationWithWPDB extends WP_UnitTestCase
     }
 
     /**
+     * Array diff for MD arrays [['id'=>1, 'name'=>'foo']]
+     *
+     * @param array<string|int, mixed> $array1
+     * @param array<string|int, mixed> $array2
+     * @return array<string|int, mixed>
+     */
+    private function arrayDifMD($array1, $array2): array
+    {
+        foreach ($array1 as $key1 => $value1) {
+            if (in_array($value1, $array2)) {
+                unset($array1[$key1]);
+            }
+        }
+        return $array1;
+    }
+
+    /**
      * Generates a query builder helper.
      *
      * @param string|null $prefix
@@ -242,7 +259,8 @@ class TestIntegrationWithWPDB extends WP_UnitTestCase
         ];
 
         $this->assertCount(5, $fruitsInner);
-        $this->assertSame($expected, $fruitsInner);
+        $this->assertEmpty($this->arrayDifMD($expected, $fruitsInner));
+
 
         // Left Join
         $fruitsLeft = $this->queryBuilderProvider('mock_')
@@ -263,7 +281,7 @@ class TestIntegrationWithWPDB extends WP_UnitTestCase
         ];
 
         $this->assertCount(6, $fruitsLeft);
-        $this->assertSame($expected, $fruitsLeft);
+        $this->assertEmpty($this->arrayDifMD($expected, $fruitsLeft));
 
         // Right Join
         $fruitsRight = $this->queryBuilderProvider('mock_')
@@ -283,7 +301,7 @@ class TestIntegrationWithWPDB extends WP_UnitTestCase
         ];
 
         $this->assertCount(5, $fruitsRight);
-        $this->assertSame($expected, $fruitsRight);
+        $this->assertEmpty($this->arrayDifMD($expected, $fruitsRight));
     }
 
     /** @testdox It should be possible to INSERT a single or multiple tables and return the primary key. It should then possible to get the same values back using find() */
