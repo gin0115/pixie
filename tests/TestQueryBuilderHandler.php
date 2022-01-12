@@ -76,14 +76,11 @@ class TestQueryBuilderHandler extends WP_UnitTestCase
 
         // Using the same connection.
         $copyBuilder = $builder->newQuery();
-        dump($builder->getConnection() === $copyBuilder->getConnection());
         $this->assertSame($builder->getConnection(), $copyBuilder->getConnection());
 
         // Using custom connection.
         $connection = new Connection($this->createMock(\wpdb::class), []);
         $customBuilder = $builder->newQuery($connection);
-        dump([$connection , $customBuilder->getConnection()]);
-        dump($connection === $customBuilder->getConnection());
         $this->assertSame($connection, $customBuilder->getConnection());
     }
 

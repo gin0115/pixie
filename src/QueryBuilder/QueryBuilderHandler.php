@@ -182,10 +182,10 @@ class QueryBuilderHandler
         );
         $executionTime += microtime(true) - $start;
         $this->sqlStatement = null;
+
         // Maybe hydrate the results.
         if (is_array($result) && $this->useHydrator()) {
             $result = $this->getHydrator()->fromMany($result);
-            // dump($a);
         }
 
         $this->fireEvents('after-select', $result, $executionTime);
