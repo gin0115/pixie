@@ -70,9 +70,12 @@ class QueryBuilderHandler
      * @param string $fetchMode
      * @throws Exception If no connection passed and not previously established.
      */
-    public function __construct(Connection $connection = null, string $fetchMode = \OBJECT)
-    {
-        if (is_null($connection) /* && ! is_a(, Connection::class) */) {
+    public function __construct(
+        Connection $connection = null,
+        string $fetchMode = \OBJECT,
+        ?array $hydratorConstructorArgs = null
+    ) {
+        if (is_null($connection)) {
             // throws if connection not already established.
             $connection = Connection::getStoredConnection();
         }
@@ -83,11 +86,14 @@ class QueryBuilderHandler
         $this->adapter = 'wpdb';
         $this->adapterConfig = $this->connection->getAdapterConfig();
 
-        $this->setFetchMode($fetchMode);
-
         if (isset($this->adapterConfig['prefix'])) {
             $this->tablePrefix = $this->adapterConfig['prefix'];
         }
+
+        // Set up optional hydration details.
+        $this->setFetchMode($fetchMode);
+        $this->hydratorConstructorArgs = $hydratorConstructorArgs;
+
 
         // Query builder adapter instance
         $this->adapterInstance = $this->container->build(
@@ -100,10 +106,10 @@ class QueryBuilderHandler
      * Set the fetch mode
      *
      * @param string $mode
-     * @param array<int, mixed> $constructorArgs
+     * @param null|array<int, mixed> $constructorArgs
      * @return $this
      */
-    public function setFetchMode(string $mode, array $constructorArgs = []): self
+    public function setFetchMode(string $mode, ?array $constructorArgs = null): self
     {
         $this->fetchMode = $mode;
         $this->hydratorConstructorArgs = $constructorArgs;
@@ -199,7 +205,7 @@ class QueryBuilderHandler
      */
     protected function getHydrator(): Hydrator
     {
-        return new Hydrator($this->getFetchMode(), $this->hydratorConstructorArgs);
+        return new Hydrator($this->getFetchMode(), $this->hydratorConstructorArgs ?? []);
     }
 
     /**

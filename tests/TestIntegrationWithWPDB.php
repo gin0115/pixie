@@ -16,6 +16,7 @@ use Exception;
 use WP_UnitTestCase;
 use Pixie\Connection;
 use Pixie\Tests\Logable_WPDB;
+use Pixie\Tests\Fixtures\ModelForMockFoo;
 use Pixie\QueryBuilder\QueryBuilderHandler;
 use Pixie\Tests\Fixtures\ModelWithMagicSetter;
 
@@ -462,5 +463,60 @@ class TestIntegrationWithWPDB extends WP_UnitTestCase
         $this->assertInstanceOf(ModelWithMagicSetter::class, $row);
         $this->assertEquals('First', $row->string);
         $this->assertEquals('1', $row->number);
+    }
+
+    /** @testdox It should be possible to map the results to either of the default WP return types [OBJECT, OBJECT_K, ARRAY_N, ARRAY_K] and custom models (with constructor args) using the Hydrator */
+    public function testGetReturnTypes(): void
+    {
+        $this->wpdb->insert('mock_foo', ['string' => 'First', 'number' => 1], ['%s', '%d']);
+        $this->wpdb->insert('mock_foo', ['string' => 'Second', 'number' => 2], ['%s', '%d']);
+        $this->wpdb->insert('mock_foo', ['string' => 'Third', 'number' => 1], ['%s', '%d']);
+
+        $selectAllFromMockFoo = $this->queryBuilderProvider()->table('mock_foo');
+
+        // Objects as a list
+        $objectList = $selectAllFromMockFoo->setFetchMode(\OBJECT)->get();
+        $this->assertArrayHasKey(0, $objectList);
+        $this->assertArrayHasKey(2, $objectList);
+        $this->assertInstanceOf(stdClass::class, $objectList[0]);
+
+        // Objects as a map with row ID as keys.
+        $objectMap = $selectAllFromMockFoo->setFetchMode(\OBJECT_K)->get();
+        foreach ($objectMap as $key => $row) {
+            $this->assertInstanceOf(stdClass::class, $row);
+            $this->assertEquals($key, $row->id);
+        }
+
+        // Arrays without row keys, just numerical [0=>id,1=>string,2=>number]
+        $arrayList = $selectAllFromMockFoo->setFetchMode(\ARRAY_N)->get();
+        $this->assertArrayHasKey(0, $arrayList);
+        $this->assertArrayHasKey(2, $arrayList);
+        $this->assertIsArray($arrayList[0]);
+        $this->assertEquals("First", $arrayList[0][1]);
+        $this->assertEquals("1", $arrayList[0][2]);
+        $this->assertEquals("Second", $arrayList[1][1]);
+        $this->assertEquals("2", $arrayList[1][2]);
+        $this->assertEquals("Third", $arrayList[2][1]);
+        $this->assertEquals("1", $arrayList[2][2]);
+
+        // Arrays with row keys.
+        $arrayMap = $selectAllFromMockFoo->setFetchMode(\ARRAY_A)->get();
+        $this->assertIsArray($arrayMap[0]);
+        $this->assertEquals("First", $arrayMap[0]['string']);
+        $this->assertEquals("1", $arrayMap[0]['number']);
+        $this->assertEquals("Second", $arrayMap[1]['string']);
+        $this->assertEquals("2", $arrayMap[1]['number']);
+        $this->assertEquals("Third", $arrayMap[2]['string']);
+        $this->assertEquals("1", $arrayMap[2]['number']);
+
+        // Custom Models with constructor properties.
+        $modelWithConstructor = $selectAllFromMockFoo->setFetchMode(ModelForMockFoo::class, ['defined'])->get();
+        foreach ($modelWithConstructor as $key => $model) {
+            $this->assertInstanceOf(ModelForMockFoo::class, $model);
+            $this->assertContains($model->string, ['First!!', 'Second!!', 'Third!!']); // Adds !! to the end of the string with setter method set_string()
+            $this->assertContains($model->number, [1,2]); // Casts value to int using setNumber() method
+            $this->assertNotEquals(-1, $model->rowId); // Sets from `id` row using magic __set(), defaults to -1 if not set using __set()
+            $this->assertEquals('defined', $model->constructorProp); // Is set from constructor args passed, is DEFAULT if not defined.
+        }
     }
 }
