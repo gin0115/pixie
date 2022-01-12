@@ -424,8 +424,8 @@ class TestIntegrationWithWPDB extends WP_UnitTestCase
         $this->assertEmpty($rows);
     }
 
-    /** @testdox [WPDB] It should be possible to create a query and have the results returned in a populated object. */
-    public function testHydrationWithModel(): void
+    /** @testdox [WPDB] It should be possible to create a query and have the results returned in a populated objects. (MANY) */
+    public function testHydrationWithModelMany(): void
     {
         $this->wpdb->insert('mock_foo', ['string' => 'First', 'number' => 1], ['%s', '%d']);
         $this->wpdb->insert('mock_foo', ['string' => 'Second', 'number' => 2], ['%s', '%d']);
@@ -447,5 +447,20 @@ class TestIntegrationWithWPDB extends WP_UnitTestCase
         $this->assertInstanceOf(ModelWithMagicSetter::class, $rows[2]);
         $this->assertEquals('Third', $rows[2]->string);
         $this->assertEquals('1', $rows[2]->number);
+    }
+
+    /** @testdox [WPDB] It should be possible to create a query and have the result returned in a populated objects. (SINGLE) */
+    public function testHydrationWithModelSingle()
+    {
+        $this->wpdb->insert('mock_foo', ['string' => 'First', 'number' => 1], ['%s', '%d']);
+
+        $row = $this->queryBuilderProvider()
+            ->table('mock_foo')
+            ->setFetchMode(ModelWithMagicSetter::class)
+            ->first();
+
+        $this->assertInstanceOf(ModelWithMagicSetter::class, $row);
+        $this->assertEquals('First', $row->string);
+        $this->assertEquals('1', $row->number);
     }
 }

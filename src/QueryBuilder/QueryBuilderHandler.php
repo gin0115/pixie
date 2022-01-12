@@ -392,8 +392,7 @@ class QueryBuilderHandler
             return $eventResult;
         }
 
-        // If first value is not an array
-        // Its not a batch insert
+        // If first value is not an array () not a batch insert)
         if (!is_array(current($data))) {
             $queryObject = $this->getQuery($type, $data);
 
