@@ -6,6 +6,7 @@ use PDO;
 use Pixie\Exception;
 use Pixie\Connection;
 use Pixie\QueryBuilder\Raw;
+use Pixie\Hydration\Hydrator;
 use Pixie\QueryBuilder\JoinBuilder;
 use Pixie\QueryBuilder\QueryObject;
 use Pixie\QueryBuilder\Transaction;
@@ -50,11 +51,19 @@ class QueryBuilderHandler
     protected $adapterInstance;
 
     /**
-     * The PDO fetch parameters to use
+     * The mode to return results as.
+     * Accepts WPDB constants or class names.
      *
-     * @var array
+     * @var string
      */
     protected $fetchMode;
+
+    /**
+     * Custom args used to construct models for hydrator
+     *
+     * @var array<int, mixed>|null
+     */
+    protected $hydratorConstructorArgs;
 
     /**
      * @param null|\Pixie\Connection $connection
@@ -91,11 +100,13 @@ class QueryBuilderHandler
      * Set the fetch mode
      *
      * @param string $mode
+     * @param array<int, mixed> $constructorArgs
      * @return $this
      */
-    public function setFetchMode(string $mode): self
+    public function setFetchMode(string $mode, array $constructorArgs = []): self
     {
         $this->fetchMode = $mode;
+        $this->hydratorConstructorArgs = $constructorArgs;
         return $this;
     }
 
@@ -110,7 +121,9 @@ class QueryBuilderHandler
             $connection = $this->connection;
         }
 
-        return new static($connection, $this->getFetchMode());
+        $new = new static($connection);
+        $new->setFetchMode($this->getFetchMode(), $this->hydratorConstructorArgs);
+        return $new;
     }
 
     /**
@@ -143,7 +156,7 @@ class QueryBuilderHandler
     /**
      * Get all rows
      *
-     * @return \stdClass|array
+     * @return object|object[]
      * @throws Exception
      */
     public function get()
@@ -163,11 +176,40 @@ class QueryBuilderHandler
         }
 
         $start = microtime(true);
-        $result = $this->dbInstance()->get_results($this->sqlStatement, $this->getFetchMode());
+        $result = $this->dbInstance()->get_results(
+            $this->sqlStatement,
+            $this->useHydrator() ? OBJECT : $this->getFetchMode()
+        );
         $executionTime += microtime(true) - $start;
         $this->sqlStatement = null;
+        // Maybe hydrate the results.
+        if (is_array($result) && $this->useHydrator()) {
+            $result = $this->getHydrator()->fromMany($result);
+            // dump($a);
+        }
+
         $this->fireEvents('after-select', $result, $executionTime);
         return $result;
+    }
+
+    /**
+     * Returns a populated instance of the Hydrator.
+     *
+     * @return Hydrator
+     */
+    protected function getHydrator(): Hydrator
+    {
+        return new Hydrator($this->getFetchMode(), $this->hydratorConstructorArgs);
+    }
+
+    /**
+     * Checks if the results should be mapped via the hydrator
+     *
+     * @return bool
+     */
+    protected function useHydrator(): bool
+    {
+        return ! in_array($this->getFetchMode(), [\ARRAY_A, \ARRAY_N, \OBJECT, \OBJECT_K]);
     }
 
     /**
@@ -493,7 +535,8 @@ class QueryBuilderHandler
             $tables = func_get_args();
         }
 
-        $instance = new static($this->connection, $this->getFetchMode());
+        $instance = new static($this->connection);
+        $this->setFetchMode($this->getFetchMode(), $this->hydratorConstructorArgs);
         $tables = $this->addTablePrefix($tables, false);
         $instance->addStatement('tables', $tables);
         return $instance;
