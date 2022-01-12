@@ -17,6 +17,7 @@ use WP_UnitTestCase;
 use Pixie\Connection;
 use Pixie\Tests\Logable_WPDB;
 use Pixie\QueryBuilder\QueryBuilderHandler;
+use Pixie\Tests\Fixtures\ModelWithMagicSetter;
 
 class TestIntegrationWithWPDB extends WP_UnitTestCase
 {
@@ -421,5 +422,30 @@ class TestIntegrationWithWPDB extends WP_UnitTestCase
         $rows = $builder->table('mock_foo')->get();
 
         $this->assertEmpty($rows);
+    }
+
+    /** @testdox [WPDB] It should be possible to create a query and have the results returned in a populated object. */
+    public function testHydrationWithModel(): void
+    {
+        $this->wpdb->insert('mock_foo', ['string' => 'First', 'number' => 1], ['%s', '%d']);
+        $this->wpdb->insert('mock_foo', ['string' => 'Second', 'number' => 2], ['%s', '%d']);
+        $this->wpdb->insert('mock_foo', ['string' => 'Third', 'number' => 1], ['%s', '%d']);
+
+        $rows = $this->queryBuilderProvider()
+            ->table('mock_foo')
+            ->setFetchMode(ModelWithMagicSetter::class)
+            ->get();
+
+        $this->assertInstanceOf(ModelWithMagicSetter::class, $rows[0]);
+        $this->assertEquals('First', $rows[0]->string);
+        $this->assertEquals('1', $rows[0]->number);
+
+        $this->assertInstanceOf(ModelWithMagicSetter::class, $rows[1]);
+        $this->assertEquals('Second', $rows[1]->string);
+        $this->assertEquals('2', $rows[1]->number);
+
+        $this->assertInstanceOf(ModelWithMagicSetter::class, $rows[2]);
+        $this->assertEquals('Third', $rows[2]->string);
+        $this->assertEquals('1', $rows[2]->number);
     }
 }

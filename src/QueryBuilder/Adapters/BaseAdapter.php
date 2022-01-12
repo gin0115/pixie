@@ -36,7 +36,6 @@ abstract class BaseAdapter
     public function select($statements)
     {
         if (!array_key_exists('tables', $statements)) {
-            dump($statements);
             throw new Exception('No table specified.', 3);
         } elseif (!array_key_exists('selects', $statements)) {
             $statements['selects'][] = '*';
