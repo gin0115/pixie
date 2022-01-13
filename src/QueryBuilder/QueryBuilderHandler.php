@@ -1209,5 +1209,4 @@ class QueryBuilderHandler
             ? $this->fetchMode
             : \OBJECT;
     }
-
 }
