@@ -94,4 +94,19 @@ class Logable_WPDB extends \wpdb
 
         return sprintf(\str_replace('%s', "'%s'", $query), ...$args[0]);
     }
+
+    /**
+     * Logs every Query call
+     *
+     * NATIVE RETURN >> int|bool
+     *
+     * @param string $query
+     * @return int|bool
+     */
+    public function query($query)
+    {
+        $this->usage_log['query'][] = $query;
+
+        return $this->then_return;
+    }
 }

@@ -901,18 +901,16 @@ class QueryBuilderHandler
     public function transaction(\Closure $callback)
     {
         try {
-            // Begin the PDO transaction
-            $this->dbInstance->beginTransaction();
+            // Begin the transaction
+            $this->dbInstance->query('START TRANSACTION');
 
             // Get the Transaction class
             $transaction = $this->container->build(Transaction::class, array($this->connection));
 
-            // Call closure
-            $callback($transaction);
+            $this->handleTransactionCall($callback, $transaction);
 
             // If no errors have been thrown or the transaction wasn't completed within
-            // the closure, commit the changes
-            $this->dbInstance->commit();
+            $this->dbInstance->query('COMMIT');
 
             return $this;
         } catch (TransactionHaltException $e) {
@@ -920,8 +918,40 @@ class QueryBuilderHandler
             return $this;
         } catch (\Exception $e) {
             // something happened, rollback changes
-            $this->dbInstance->rollBack();
+            $this->dbInstance->query('ROLLBACK');
             return $this;
+        }
+    }
+
+    /**
+     * Handles the transaction call.
+     *
+     * Catches any WP Errors (printed)
+     *
+     * @param callable $callback
+     * @param \Pixie\QueryBuilder\Transaction $transaction
+     * @return void
+     */
+    protected function handleTransactionCall(callable $callback, Transaction $transaction): void
+    {
+        ob_end_flush();
+        ob_start();
+
+        
+        
+
+        try {
+            $callback($transaction);
+            $output = ob_get_contents();
+        } catch (\Throwable $th) {
+            ob_flush();
+            throw $th;
+        }
+        ob_flush();
+
+        // If we caught an error, throw an exception.
+        if (\mb_strlen($output) !== 0) {
+            throw new Exception($output);
         }
     }
 
