@@ -928,26 +928,20 @@ class QueryBuilderHandler
      *
      * Catches any WP Errors (printed)
      *
-     * @param callable $callback
-     * @param \Pixie\QueryBuilder\Transaction $transaction
+     * @param callable    $callback
+     * @param Transaction $transaction
      * @return void
      */
     protected function handleTransactionCall(callable $callback, Transaction $transaction): void
     {
-        ob_end_flush();
-        ob_start();
-
-        
-        
-
         try {
+            ob_start();
             $callback($transaction);
-            $output = ob_get_contents();
+            $output = ob_get_clean();
         } catch (\Throwable $th) {
-            ob_flush();
+            ob_end_clean();
             throw $th;
         }
-        ob_flush();
 
         // If we caught an error, throw an exception.
         if (\mb_strlen($output) !== 0) {
