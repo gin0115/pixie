@@ -1210,21 +1210,4 @@ class QueryBuilderHandler
             : \OBJECT;
     }
 
-    /**
-     * Gets the first result from an array based on the WPDB Fetch mode.
-     *
-     * @param array $array
-     * @return void
-     */
-    protected function getFirstResultFromArray(array $array)
-    {
-        $arrayKeyFirst = function_exists('array_key_first')
-            ? 'array_key_first'
-            : function (array $arr) {
-                foreach ($arr as $key => $unused) {
-                    return $key;
-                }
-                return null;
-            };
-    }
 }
