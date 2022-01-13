@@ -29,6 +29,7 @@ class TestAliasFacade extends WP_UnitTestCase
         $facade::raw('select * from foo');
         $protectedBuilder = Objects::get_property($facade, 'queryBuilderInstance');
 
+        $this->assertInstanceOf(QueryBuilderHandler::class, $protectedBuilder);
         $this->assertSame($connection, $protectedBuilder->getConnection());
     }
 }
