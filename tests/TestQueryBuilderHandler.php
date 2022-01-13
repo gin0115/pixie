@@ -17,6 +17,7 @@ use Pixie\Connection;
 use Pixie\Tests\Logable_WPDB;
 use Pixie\QueryBuilder\Transaction;
 use Pixie\QueryBuilder\QueryBuilderHandler;
+use Pixie\QueryBuilder\TransactionHaltException;
 
 class TestQueryBuilderHandler extends WP_UnitTestCase
 {
@@ -149,5 +150,21 @@ class TestQueryBuilderHandler extends WP_UnitTestCase
         $this->assertSame(["START TRANSACTION", "COMMIT"], $this->wpdb->usage_log['query']);
         $this->assertEquals("INSERT INTO foo (name) VALUES ('Dave')", $this->wpdb->usage_log['get_results'][0]['query']);
         $this->assertEquals("INSERT INTO foo (name) VALUES ('Jane')", $this->wpdb->usage_log['get_results'][1]['query']);
+    }
+
+    /** @testdox When calling commit on a transaction, a TransactionHaltException should be thrown */
+    public function testTransactionThrowsHaltOnCommit()
+    {
+        $this->expectException(TransactionHaltException::class);
+        $transaction = new Transaction($this->queryBuilderProvider()->getConnection());
+        $transaction->commit();
+    }
+
+    /** @testdox When calling rollback on a transaction, a TransactionHaltException should be thrown */
+    public function testTransactionThrowsHaltOnRollback()
+    {
+        $this->expectException(TransactionHaltException::class);
+        $transaction = new Transaction($this->queryBuilderProvider()->getConnection());
+        $transaction->rollback();
     }
 }

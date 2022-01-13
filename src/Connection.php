@@ -6,7 +6,6 @@ use Exception;
 use Viocon\Container;
 use Pixie\AliasFacade;
 use Pixie\EventHandler;
-use Pixie\QueryBuilder\Raw;
 use Pixie\QueryBuilder\QueryBuilderHandler;
 
 class Connection
