@@ -63,4 +63,20 @@ class TestWPDBAdaptor extends WP_UnitTestCase
         $this->assertArrayHasKey('bindings', $criteriaQuery);
         $this->assertEmpty($criteriaQuery['bindings']);
     }
+
+    /** @testdox Attempting to insert data without passing a valid table name, should result in an exception being thrown. */
+    public function testAttemptingToInsertWhereNoTableDefinedShouldResultInAnException(): void
+    {
+        $this->expectExceptionMessage('No table specified');
+        $this->expectException(Exception::class);
+        $this->getAdapter()->insert([], ['foo' => 'bar']);
+    }
+
+    /** @testdox Attempting to insert on duplicate with matching criteria, should throw an exception*/
+    public function testAttemptingToInsertOnDuplicateWithNoDuplicate(): void
+    {
+        $this->expectExceptionMessage('No data given');
+        $this->expectException(Exception::class);
+        $this->getAdapter()->insert(['tables' => ['foo'],'onduplicate' => []], ['foo' => 'bar']);
+    }
 }
