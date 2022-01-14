@@ -1,3 +1,14 @@
+# This has been abandoned 
+
+PLEASE SEE https://github.com/gin0115/pixie-wpdb
+
+
+***
+***
+***
+
+
+
 # Modified version of Pixie for use with WordPress and WPDB over PDO.
 
 ## WIP!
