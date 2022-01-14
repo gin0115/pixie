@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Tests for the WPDB Adaptor
+ *
+ * @since 0.1.0
+ * @author GLynn Quelch <glynn.quelch@gmail.com>
+ */
+
+namespace Pixie\Tests;
+
+use Exception;
+use WP_UnitTestCase;
+use Pixie\Connection;
+use Pixie\Tests\Logable_WPDB;
+use Pixie\QueryBuilder\WPDBAdapter;
+
+class TestWPDBAdaptor extends WP_UnitTestCase
+{
+    /** @var Logable_WPDB Mocked WPDB instance. */
+    private $wpdb;
+
+    /** @var Connection */
+    private $connection;
+
+    public function setUp(): void
+    {
+        $this->wpdb = new Logable_WPDB();
+        parent::setUp();
+    }
+
+    /**
+     * Get an Adapter
+     *
+     * @param string|null $prefix
+     * @param string|null $alias
+     * @return \Pixie\WPDBAdapter
+     */
+    public function getAdapter(?string $prefix = null, ?string $alias = null): WPDBAdapter
+    {
+        $config = $prefix ? ['prefix' => $prefix] : [];
+        $this->connection = new Connection($this->wpdb, $config, $alias);
+        return new WPDBAdapter($this->connection);
+    }
+
+    /** @testdox Attempting to do a select query with no defined table and exception should be thrown. */
+    public function testThrowsExceptionAttemptingSelectWithNoTable(): void
+    {
+        $this->expectExceptionMessage('No table specified');
+        $this->expectException(Exception::class);
+        $adapter = $this->getAdapter();
+        $adapter->select([]);
+    }
+
+    /** @testdox When attempting to compile a query, if no criteria is defined the result should also be empty. */
+    public function testCriteriaQueryGenerationWillReturnEmptyIfNoCriteriaStatementsDefined(): void
+    {
+        $criteriaQuery = $this->getAdapter()->criteriaOnly([]);
+        $this->assertArrayHasKey('sql', $criteriaQuery);
+        $this->assertEmpty($criteriaQuery['sql']);
+        $this->assertArrayHasKey('bindings', $criteriaQuery);
+        $this->assertEmpty($criteriaQuery['bindings']);
+    }
+}

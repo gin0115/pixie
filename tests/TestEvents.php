@@ -18,6 +18,12 @@ use Pixie\EventHandler;
 
 class TestEvents extends WP_UnitTestCase
 {
+    /**
+     * Returns a simple closure that returns whatever string is passed.
+     *
+     * @param string $returns
+     * @return \Closure
+     */
     public function createClosure(string $returns): Closure
     {
         return function () use ($returns) {
