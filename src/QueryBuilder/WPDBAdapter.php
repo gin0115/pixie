@@ -1,14 +1,19 @@
 <?php
 
-namespace Pixie\QueryBuilder\Adapters;
+namespace Pixie\QueryBuilder;
 
 use Pixie\Exception;
 use Pixie\Connection;
 use Pixie\QueryBuilder\Raw;
 use Pixie\QueryBuilder\NestedCriteria;
 
-abstract class BaseAdapter
+class WPDBAdapter
 {
+    /**
+     * @var string
+     */
+    protected $sanitizer = '';
+
     /**
      * @var \Pixie\Connection
      */
