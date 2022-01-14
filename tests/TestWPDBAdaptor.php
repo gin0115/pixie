@@ -104,4 +104,14 @@ class TestWPDBAdaptor extends WP_UnitTestCase
         $this->expectException(Exception::class);
         $this->getAdapter()->delete([]);
     }
+
+    /** @testdox It should be possible to infer the sprintf style format placeholder from a value passed. */
+    public function testInferType(): void
+    {
+        $this->assertEquals('%s', $this->getAdapter()->inferType('string'));
+        $this->assertEquals('%f', $this->getAdapter()->inferType(3.14));
+        $this->assertEquals('%d', $this->getAdapter()->inferType(3));
+        $this->assertEquals('%d', $this->getAdapter()->inferType(false));
+        $this->assertEquals('', $this->getAdapter()->inferType(['im', 'an', 'array']));
+    }
 }
