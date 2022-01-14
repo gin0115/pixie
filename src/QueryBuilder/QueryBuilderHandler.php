@@ -1,8 +1,17 @@
-<?php namespace Pixie\QueryBuilder;
+<?php
+
+namespace Pixie\QueryBuilder;
 
 use PDO;
-use Pixie\Connection;
 use Pixie\Exception;
+use Pixie\Connection;
+use Pixie\QueryBuilder\Raw;
+use Pixie\Hydration\Hydrator;
+use Pixie\QueryBuilder\JoinBuilder;
+use Pixie\QueryBuilder\QueryObject;
+use Pixie\QueryBuilder\Transaction;
+// use Pixie\QueryBuilder\Adapters\wpdb
+use Pixie\QueryBuilder\WPDBAdapter;
 
 class QueryBuilderHandler
 {
@@ -23,14 +32,14 @@ class QueryBuilderHandler
     protected $statements = array();
 
     /**
-     * @var PDO
+     * @var \wpdb
      */
-    protected $pdo;
+    protected $dbInstance;
 
     /**
-     * @var null|PDOStatement
+     * @var null|string[]
      */
-    protected $pdoStatement = null;
+    protected $sqlStatement = null;
 
     /**
      * @var null|string
@@ -43,73 +52,73 @@ class QueryBuilderHandler
     protected $adapterInstance;
 
     /**
-     * The PDO fetch parameters to use
+     * The mode to return results as.
+     * Accepts WPDB constants or class names.
      *
-     * @var array
+     * @var string
      */
-    protected $fetchParameters = array(PDO::FETCH_OBJ);
+    protected $fetchMode;
+
+    /**
+     * Custom args used to construct models for hydrator
+     *
+     * @var array<int, mixed>|null
+     */
+    protected $hydratorConstructorArgs;
 
     /**
      * @param null|\Pixie\Connection $connection
-     *
-     * @param int $fetchMode
-     * @throws Exception
+     * @param string $fetchMode
+     * @throws Exception If no connection passed and not previously established.
      */
-    public function __construct(Connection $connection = null, $fetchMode = PDO::FETCH_OBJ)
-    {
+    public function __construct(
+        Connection $connection = null,
+        string $fetchMode = \OBJECT,
+        ?array $hydratorConstructorArgs = null
+    ) {
         if (is_null($connection)) {
-            if (!$connection = Connection::getStoredConnection()) {
-                throw new Exception('No database connection found.', 1);
-            }
+            // throws if connection not already established.
+            $connection = Connection::getStoredConnection();
         }
 
         $this->connection = $connection;
         $this->container = $this->connection->getContainer();
-        $this->pdo = $this->connection->getPdoInstance();
-        $this->adapter = $this->connection->getAdapter();
+        $this->dbInstance = $this->connection->getDbInstance();
+        $this->adapter = 'wpdb';
         $this->adapterConfig = $this->connection->getAdapterConfig();
-
-        $this->setFetchMode($fetchMode);
 
         if (isset($this->adapterConfig['prefix'])) {
             $this->tablePrefix = $this->adapterConfig['prefix'];
         }
 
+        // Set up optional hydration details.
+        $this->setFetchMode($fetchMode);
+        $this->hydratorConstructorArgs = $hydratorConstructorArgs;
+
+
         // Query builder adapter instance
         $this->adapterInstance = $this->container->build(
-            '\\Pixie\\QueryBuilder\\Adapters\\' . ucfirst($this->adapter),
+            WPDBAdapter::class,
             array($this->connection)
         );
-
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     /**
      * Set the fetch mode
      *
-     * @param $mode
+     * @param string $mode
+     * @param null|array<int, mixed> $constructorArgs
      * @return $this
      */
-    public function setFetchMode($mode)
+    public function setFetchMode(string $mode, ?array $constructorArgs = null): self
     {
-        $this->fetchParameters = func_get_args();
+        $this->fetchMode = $mode;
+        $this->hydratorConstructorArgs = $constructorArgs;
         return $this;
     }
 
     /**
-     * Fetch query results as object of specified type
-     *
-     * @param $className
-     * @param array $constructorArgs
-     * @return QueryBuilderHandler
-     */
-    public function asObject($className, $constructorArgs = array())
-    {
-        return $this->setFetchMode(PDO::FETCH_CLASS, $className, $constructorArgs);
-    }
-
-    /**
-     * @param null|\Pixie\Connection $connection
+     * @param null|Connection $connection
      * @return QueryBuilderHandler
      * @throws Exception
      */
@@ -119,7 +128,9 @@ class QueryBuilderHandler
             $connection = $this->connection;
         }
 
-        return new static($connection, $this->getFetchMode());
+        $new = new static($connection);
+        $new->setFetchMode($this->getFetchMode(), $this->hydratorConstructorArgs);
+        return $new;
     }
 
     /**
@@ -130,7 +141,7 @@ class QueryBuilderHandler
      */
     public function query($sql, $bindings = array())
     {
-        list($this->pdoStatement) = $this->statement($sql, $bindings);
+        list($this->sqlStatement) = $this->statement($sql, $bindings);
 
         return $this;
     }
@@ -139,27 +150,20 @@ class QueryBuilderHandler
      * @param       $sql
      * @param array $bindings
      *
-     * @return array PDOStatement and execution time as float
+     * @return array sqlStatement and execution time as float
      */
     public function statement($sql, $bindings = array())
     {
         $start = microtime(true);
-        $pdoStatement = $this->pdo->prepare($sql);
-        foreach ($bindings as $key => $value) {
-            $pdoStatement->bindValue(
-                is_int($key) ? $key + 1 : $key,
-                $value,
-                is_int($value) || is_bool($value) ? PDO::PARAM_INT : PDO::PARAM_STR
-            );
-        }
-        $pdoStatement->execute();
-        return array($pdoStatement, microtime(true) - $start);
+        $sqlStatement = empty($bindings) ? $sql : $this->dbInstance->prepare($sql, $bindings);
+
+        return array($sqlStatement, microtime(true) - $start);
     }
 
     /**
      * Get all rows
      *
-     * @return \stdClass|array
+     * @return object|object[]
      * @throws Exception
      */
     public function get()
@@ -168,28 +172,57 @@ class QueryBuilderHandler
         if (!is_null($eventResult)) {
             return $eventResult;
         };
-
         $executionTime = 0;
-        if (is_null($this->pdoStatement)) {
+        if (is_null($this->sqlStatement)) {
             $queryObject = $this->getQuery('select');
-            list($this->pdoStatement, $executionTime) = $this->statement(
+
+            list($this->sqlStatement, $executionTime) = $this->statement(
                 $queryObject->getSql(),
                 $queryObject->getBindings()
             );
         }
 
         $start = microtime(true);
-        $result = call_user_func_array(array($this->pdoStatement, 'fetchAll'), $this->fetchParameters);
+        $result = $this->dbInstance()->get_results(
+            $this->sqlStatement,
+            $this->useHydrator() ? OBJECT : $this->getFetchMode()
+        );
         $executionTime += microtime(true) - $start;
-        $this->pdoStatement = null;
+        $this->sqlStatement = null;
+
+        // Maybe hydrate the results.
+        if (is_array($result) && $this->useHydrator()) {
+            $result = $this->getHydrator()->fromMany($result);
+        }
+
         $this->fireEvents('after-select', $result, $executionTime);
         return $result;
     }
 
     /**
+     * Returns a populated instance of the Hydrator.
+     *
+     * @return Hydrator
+     */
+    protected function getHydrator(): Hydrator
+    {
+        return new Hydrator($this->getFetchMode(), $this->hydratorConstructorArgs ?? []);
+    }
+
+    /**
+     * Checks if the results should be mapped via the hydrator
+     *
+     * @return bool
+     */
+    protected function useHydrator(): bool
+    {
+        return ! in_array($this->getFetchMode(), [\ARRAY_A, \ARRAY_N, \OBJECT, \OBJECT_K]);
+    }
+
+    /**
      * Get first row
      *
-     * @return \stdClass|null
+     * @return \stdClass|array|null
      */
     public function first()
     {
@@ -223,52 +256,97 @@ class QueryBuilderHandler
     }
 
     /**
-     * Get count of rows
+     * Used to handle all aggregation method.
      *
-     * @return int
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
+     *
+     * @param string $type
+     * @param string $field
+     * @return float
      */
-    public function count()
+    protected function aggregate(string $type, string $field = '*'): float
     {
-        // Get the current statements
-        $originalStatements = $this->statements;
+        // Verify that field exists
+        if ($field !== '*' && isset($this->statements['selects']) === true && \in_array($field, $this->statements['selects'], true) === false) {
+            throw new \Exception(sprintf('Failed %s query - the column %s hasn\'t been selected in the query.', $type, $field));
+        }
 
-        unset($this->statements['orderBys']);
-        unset($this->statements['limit']);
-        unset($this->statements['offset']);
+        if (isset($this->statements['tables']) === false) {
+            throw new Exception('No table selected');
+        }
 
-        $count = $this->aggregate('count');
-        $this->statements = $originalStatements;
+        $count = $this
+            ->table($this->subQuery($this, 'count'))
+            ->select([$this->raw(sprintf('%s(%s) AS field', strtoupper($type), $field))])
+            ->first();
 
-        return $count;
+        return isset($count->field) === true ? (float)$count->field : 0;
     }
 
     /**
-     * @param $type
+     * Get count of all the rows for the current query
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
      *
-     * @return int
+     * @param string $field
+     *
+     * @return integer
+     * @throws Exception
      */
-    protected function aggregate($type)
+    public function count(string $field = '*'): int
     {
-        // Get the current selects
-        $mainSelects = isset($this->statements['selects']) ? $this->statements['selects'] : null;
-        // Replace select with a scalar value like `count`
-        $this->statements['selects'] = array($this->raw($type . '(*) as field'));
-        $row = $this->get();
+        return (int)$this->aggregate('count', $field);
+    }
 
-        // Set the select as it was
-        if ($mainSelects) {
-            $this->statements['selects'] = $mainSelects;
-        } else {
-            unset($this->statements['selects']);
-        }
+    /**
+     * Get the sum for a field in the current query
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
+     *
+     * @param string $field
+     * @return float
+     * @throws Exception
+     */
+    public function sum(string $field): float
+    {
+        return $this->aggregate('sum', $field);
+    }
 
-        if (is_array($row[0])) {
-            return (int)$row[0]['field'];
-        } elseif (is_object($row[0])) {
-            return (int)$row[0]->field;
-        }
+    /**
+     * Get the average for a field in the current query
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
+     *
+     * @param string $field
+     * @return float
+     * @throws Exception
+     */
+    public function average(string $field): float
+    {
+        return $this->aggregate('avg', $field);
+    }
 
-        return 0;
+    /**
+     * Get the minimum for a field in the current query
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
+     *
+     * @param string $field
+     * @return float
+     * @throws Exception
+     */
+    public function min(string $field): float
+    {
+        return $this->aggregate('min', $field);
+    }
+
+    /**
+     * Get the maximum for a field in the current query
+     * @see Taken from the pecee-pixie library - https://github.com/skipperbent/pecee-pixie/
+     *
+     * @param string $field
+     * @return float
+     * @throws Exception
+     */
+    public function max(string $field): float
+    {
+        return $this->aggregate('max', $field);
     }
 
     /**
@@ -288,8 +366,8 @@ class QueryBuilderHandler
         $queryArr = $this->adapterInstance->$type($this->statements, $dataToBePassed);
 
         return $this->container->build(
-            '\\Pixie\\QueryBuilder\\QueryObject',
-            array($queryArr['sql'], $queryArr['bindings'], $this->pdo)
+            QueryObject::class,
+            array($queryArr['sql'], $queryArr['bindings'], $this->dbInstance)
         );
     }
 
@@ -321,14 +399,15 @@ class QueryBuilderHandler
             return $eventResult;
         }
 
-        // If first value is not an array
-        // Its not a batch insert
+        // If first value is not an array () not a batch insert)
         if (!is_array(current($data))) {
             $queryObject = $this->getQuery($type, $data);
 
-            list($result, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+            list($preparedQuery, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+            $this->dbInstance->get_results($preparedQuery);
 
-            $return = $result->rowCount() === 1 ? $this->pdo->lastInsertId() : null;
+            // Check we have a result.
+            $return = $this->dbInstance->rows_affected === 1 ? $this->dbInstance->insert_id : null;
         } else {
             // Its a batch insert
             $return = array();
@@ -336,11 +415,12 @@ class QueryBuilderHandler
             foreach ($data as $subData) {
                 $queryObject = $this->getQuery($type, $subData);
 
-                list($result, $time) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+                list($preparedQuery, $time) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+                $this->dbInstance->get_results($preparedQuery);
                 $executionTime += $time;
 
-                if ($result->rowCount() === 1) {
-                    $return[] = $this->pdo->lastInsertId();
+                if ($this->dbInstance->rows_affected === 1) {
+                    $return[] = $this->dbInstance->insert_id;
                 }
             }
         }
@@ -383,7 +463,7 @@ class QueryBuilderHandler
     /**
      * @param $data
      *
-     * @return $this
+     * @return bool
      */
     public function update($data)
     {
@@ -393,11 +473,14 @@ class QueryBuilderHandler
         }
 
         $queryObject = $this->getQuery('update', $data);
+        list($preparedQuery, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
 
-        list($response, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+        $this->dbInstance()->get_results($preparedQuery);
         $this->fireEvents('after-update', $queryObject, $executionTime);
 
-        return $response;
+        return $this->dbInstance()->rows_affected !== 0
+            ? $this->dbInstance()->rows_affected
+            : null;
     }
 
     /**
@@ -437,7 +520,8 @@ class QueryBuilderHandler
 
         $queryObject = $this->getQuery('delete');
 
-        list($response, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+        list($preparedQuery, $executionTime) = $this->statement($queryObject->getSql(), $queryObject->getBindings());
+        $response = $this->dbInstance()->get_results($preparedQuery);
         $this->fireEvents('after-delete', $queryObject, $executionTime);
 
         return $response;
@@ -457,7 +541,8 @@ class QueryBuilderHandler
             $tables = func_get_args();
         }
 
-        $instance = new static($this->connection, $this->getFetchMode());
+        $instance = new static($this->connection);
+        $this->setFetchMode($this->getFetchMode(), $this->hydratorConstructorArgs);
         $tables = $this->addTablePrefix($tables, false);
         $instance->addStatement('tables', $tables);
         return $instance;
@@ -508,7 +593,7 @@ class QueryBuilderHandler
     }
 
     /**
-     * @param $field
+     * @param string|string[] $field Either the single field or an array of fields.
      *
      * @return $this
      */
@@ -520,8 +605,8 @@ class QueryBuilderHandler
     }
 
     /**
-     * @param        $fields
-     * @param string $defaultDirection
+     * @param string|string[] $fields
+     * @param string          $defaultDirection
      *
      * @return $this
      */
@@ -769,10 +854,12 @@ class QueryBuilderHandler
         return $this->whereNullHandler($key, 'NOT', 'or');
     }
 
-    protected function whereNullHandler($key, $prefix = '', $operator = '')
+    protected function whereNullHandler($key, string $prefix = '', $operator = '')
     {
+        $prefix = \strlen($prefix) === 0 ? '' : " {$prefix}";
+
         $key = $this->adapterInstance->wrapSanitizer($this->addTablePrefix($key));
-        return $this->{$operator . 'Where'}($this->raw("{$key} IS {$prefix} NULL"));
+        return $this->{$operator . 'Where'}($this->raw("{$key} IS{$prefix} NULL"));
     }
 
     /**
@@ -794,7 +881,7 @@ class QueryBuilderHandler
 
         // Build a new JoinBuilder class, keep it by reference so any changes made
         // in the closure should reflect here
-        $joinBuilder = $this->container->build('\\Pixie\\QueryBuilder\\JoinBuilder', array($this->connection));
+        $joinBuilder = $this->container->build(JoinBuilder::class, array($this->connection));
         $joinBuilder = &$joinBuilder;
         // Call the closure with our new joinBuilder object
         $key($joinBuilder);
@@ -815,18 +902,16 @@ class QueryBuilderHandler
     public function transaction(\Closure $callback)
     {
         try {
-            // Begin the PDO transaction
-            $this->pdo->beginTransaction();
+            // Begin the transaction
+            $this->dbInstance->query('START TRANSACTION');
 
             // Get the Transaction class
-            $transaction = $this->container->build('\\Pixie\\QueryBuilder\\Transaction', array($this->connection));
+            $transaction = $this->container->build(Transaction::class, array($this->connection));
 
-            // Call closure
-            $callback($transaction);
+            $this->handleTransactionCall($callback, $transaction);
 
             // If no errors have been thrown or the transaction wasn't completed within
-            // the closure, commit the changes
-            $this->pdo->commit();
+            $this->dbInstance->query('COMMIT');
 
             return $this;
         } catch (TransactionHaltException $e) {
@@ -834,8 +919,34 @@ class QueryBuilderHandler
             return $this;
         } catch (\Exception $e) {
             // something happened, rollback changes
-            $this->pdo->rollBack();
+            $this->dbInstance->query('ROLLBACK');
             return $this;
+        }
+    }
+
+    /**
+     * Handles the transaction call.
+     *
+     * Catches any WP Errors (printed)
+     *
+     * @param callable    $callback
+     * @param Transaction $transaction
+     * @return void
+     */
+    protected function handleTransactionCall(callable $callback, Transaction $transaction): void
+    {
+        try {
+            ob_start();
+            $callback($transaction);
+            $output = ob_get_clean();
+        } catch (\Throwable $th) {
+            ob_end_clean();
+            throw $th;
+        }
+
+        // If we caught an error, throw an exception.
+        if (\mb_strlen($output) !== 0) {
+            throw new Exception($output);
         }
     }
 
@@ -879,6 +990,30 @@ class QueryBuilderHandler
     }
 
     /**
+     * @param string           $table
+     * @param callable|string  $key
+     * @param null|string      $operator
+     * @param null|mixed       $value
+     * @return this
+     */
+    public function crossJoin($table, $key, $operator = null, $value = null)
+    {
+        return $this->join($table, $key, $operator, $value, 'cross');
+    }
+
+    /**
+     * @param string           $table
+     * @param callable|string  $key
+     * @param null|string      $operator
+     * @param null|mixed       $value
+     * @return this
+     */
+    public function outerJoin($table, $key, $operator = null, $value = null)
+    {
+        return $this->join($table, $key, $operator, $value, 'outer');
+    }
+
+    /**
      * Add a raw query
      *
      * @param $value
@@ -888,17 +1023,17 @@ class QueryBuilderHandler
      */
     public function raw($value, $bindings = array())
     {
-        return $this->container->build('\\Pixie\\QueryBuilder\\Raw', array($value, $bindings));
+        return $this->container->build(Raw::class, array($value, $bindings));
     }
 
     /**
-     * Return PDO instance
+     * Return wpdb instance
      *
-     * @return PDO
+     * @return wpdb
      */
-    public function pdo()
+    public function dbInstance(): \wpdb
     {
-        return $this->pdo;
+        return $this->dbInstance;
     }
 
     /**
@@ -938,7 +1073,7 @@ class QueryBuilderHandler
     /**
      * Add table prefix (if given) on given string.
      *
-     * @param      $values
+     * @param string|string[]     $values
      * @param bool $tableFieldMix If we have mixes of field and table names with a "."
      *
      * @return array|mixed
@@ -1067,11 +1202,12 @@ class QueryBuilderHandler
     }
 
     /**
-     * @return int will return PDO Fetch mode
+     * @return string will return WPDB Fetch mode
      */
     public function getFetchMode()
     {
-        return !empty($this->fetchParameters) ?
-            current($this->fetchParameters) : PDO::FETCH_OBJ;
+        return null !== $this->fetchMode
+            ? $this->fetchMode
+            : \OBJECT;
     }
 }

@@ -1,4 +1,6 @@
-<?php namespace Pixie\QueryBuilder;
+<?php
+
+namespace Pixie\QueryBuilder;
 
 class QueryObject
 {
@@ -9,20 +11,20 @@ class QueryObject
     protected $sql;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     protected $bindings = array();
 
     /**
-     * @var \PDO
+     * @var \wpdb
      */
-    protected $pdo;
+    protected $dbInstance;
 
-    public function __construct($sql, array $bindings, \PDO $pdo)
+    public function __construct($sql, array $bindings, $dbInstance)
     {
         $this->sql = (string)$sql;
         $this->bindings = $bindings;
-        $this->pdo = $pdo;
+        $this->dbInstance = $dbInstance;
     }
 
     /**
@@ -34,7 +36,7 @@ class QueryObject
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getBindings()
     {
@@ -65,32 +67,7 @@ class QueryObject
      */
     protected function interpolateQuery($query, $params)
     {
-        $keys = array();
-        $values = $params;
-
-        # build a regular expression for each parameter
-        foreach ($params as $key => $value) {
-            if (is_string($key)) {
-                $keys[] = '/:' . $key . '/';
-            } else {
-                $keys[] = '/[?]/';
-            }
-
-            if (is_string($value)) {
-                $values[$key] = $this->pdo->quote($value);
-            }
-
-            if (is_array($value)) {
-                $values[$key] = implode(',', $this->pdo->quote($value));
-            }
-
-            if (is_null($value)) {
-                $values[$key] = 'NULL';
-            }
-        }
-
-        $query = preg_replace($keys, $values, $query, 1, $count);
-
-        return $query;
+        // Only call this when we have valid params (avoids wpdb::prepare() incorrectly called error)
+        return empty($params) ? $query : $this->dbInstance->prepare($query, $params);
     }
 }
