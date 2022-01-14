@@ -32,7 +32,7 @@ require 'vendor/autoload.php';
 
 // Create a connection, once only.
 $config = [
-    'prefix'    => 'cb_', // Table prefix, optional
+    'prefix' => 'cb_', // Table prefix, optional
 ];
 
 // Get the current (gloabl) WPDB instance, or create a custom one 
