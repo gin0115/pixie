@@ -10,7 +10,8 @@ use Pixie\Hydration\Hydrator;
 use Pixie\QueryBuilder\JoinBuilder;
 use Pixie\QueryBuilder\QueryObject;
 use Pixie\QueryBuilder\Transaction;
-use Pixie\QueryBuilder\Adapters\wpdb as WpdbAdaptor;
+// use Pixie\QueryBuilder\Adapters\wpdb
+use Pixie\QueryBuilder\WPDBAdapter;
 
 class QueryBuilderHandler
 {
@@ -97,7 +98,7 @@ class QueryBuilderHandler
 
         // Query builder adapter instance
         $this->adapterInstance = $this->container->build(
-            WpdbAdaptor::class,
+            WPDBAdapter::class,
             array($this->connection)
         );
     }
@@ -267,7 +268,7 @@ class QueryBuilderHandler
     {
         // Verify that field exists
         if ($field !== '*' && isset($this->statements['selects']) === true && \in_array($field, $this->statements['selects'], true) === false) {
-            throw new \Exception(sprintf('Failed to count query - the column %s hasn\'t been selected in the query.', $field));
+            throw new \Exception(sprintf('Failed %s query - the column %s hasn\'t been selected in the query.', $type, $field));
         }
 
         if (isset($this->statements['tables']) === false) {
