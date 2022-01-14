@@ -73,10 +73,27 @@ class TestWPDBAdaptor extends WP_UnitTestCase
     }
 
     /** @testdox Attempting to insert on duplicate with matching criteria, should throw an exception*/
-    public function testAttemptingToInsertOnDuplicateWithNoDuplicate(): void
+    public function testAttemptingToInsertOnDuplicateWithNoDuplicateDataShouldResultInAnException(): void
     {
         $this->expectExceptionMessage('No data given');
         $this->expectException(Exception::class);
         $this->getAdapter()->insert(['tables' => ['foo'],'onduplicate' => []], ['foo' => 'bar']);
+    }
+
+    /** @testdox Attempting to run an update without defining a table, should throw an exception*/
+    public function testAttemptingToUpdateWithNoTableDefinedShouldResultInAnException(): void
+    {
+        $this->expectExceptionMessage('No table specified');
+        $this->expectException(Exception::class);
+        $this->getAdapter()->update([], ['foo' => 'bar']);
+    }
+
+
+    /** @testdox Attempting to update without any data, should throw an exception*/
+    public function testAttemptingToUpdateWithNoDataDefinedShouldResultInAnException(): void
+    {
+        $this->expectExceptionMessage('No data given');
+        $this->expectException(Exception::class);
+        $this->getAdapter()->update(['tables' => ['foo']], []);
     }
 }
