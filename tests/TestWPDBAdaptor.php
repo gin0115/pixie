@@ -96,4 +96,12 @@ class TestWPDBAdaptor extends WP_UnitTestCase
         $this->expectException(Exception::class);
         $this->getAdapter()->update(['tables' => ['foo']], []);
     }
+
+    /** @testdox Attempting to run delete without defining a table, should throw an exception*/
+    public function testAttemptingToDeleteWithNoTableDefinedShouldResultInAnException(): void
+    {
+        $this->expectExceptionMessage('No table specified');
+        $this->expectException(Exception::class);
+        $this->getAdapter()->delete([]);
+    }
 }
